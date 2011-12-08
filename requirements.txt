@@ -1,0 +1,6 @@
+South
+simplejson
+django-debug-toolbar
+django-dtpanel-htmltidy
+django-extensions
+Werkzeug
