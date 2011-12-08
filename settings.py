@@ -89,6 +89,8 @@ INSTALLED_APPS = (
     'south',
     'debug_toolbar',
     'debug_toolbar_htmltidy',
+    'tournament',
+    'match',
 )
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.version.VersionDebugPanel',
