@@ -28,7 +28,7 @@ GRANT ALL PRIVILEGES ON scoring.* TO 'scoring'@'localhost';
 python manage.py syncdb
 python manage.py migrate
 
-# ~~~ Optionally you may add things to settings_local.py file to override settings        locally--this does not get tracked so they will only effect your install.
+# ~~~ Optionally you may add things to local_settings.py file to override settings        locally--this does not get tracked so they will only effect your install.
 
 python manage.py runserver
 
