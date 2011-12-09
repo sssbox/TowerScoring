@@ -4,18 +4,18 @@ from django.contrib.auth.models import User
 
 from tournament.models import Team
 
+ALLIANCE_CHOICES = (('red', 'red'), ('blue', 'blue'), ('center', 'center'))
 class Tower(models.Model):
-    NAME_CHOICES = ( \
+    TOWER_CHOICES = ( \
             ('low_red', 'low_red'),
             ('high_red', 'high_red'),
             ('low_blue', 'low_blue'),
             ('high_blue', 'high_blue'),
             ('center', 'center'),
         )
-    name = models.CharField(max_length=9, choices=NAME_CHOICES, unique=True)
+    name = models.CharField(max_length=9, choices=TOWER_CHOICES, unique=True)
 
-    ALLIANCE_CHOICES = (('red', 'red'), ('blue', 'blue'), ('center', 'center'))
-    alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
+#    alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
 
 class TowerLevel(models.Model):
     level = models.IntegerField(choices=((1, '1'), (2, '1')))
@@ -29,7 +29,6 @@ class TowerLevel(models.Model):
             ('purple', 'purple'),
         )
     state = models.CharField(max_length=6, choices=STATE_CHOICES)
-
 
 class Match(models.Model):
     time = models.DateTimeField()
@@ -56,18 +55,29 @@ class Match(models.Model):
     red_penalties = models.IntegerField(default=0)
     blue_penalties = models.IntegerField(default=0)
 
+    blue_center_active = models.BooleanField(default=False)
+    red_center_active = models.BooleanField(default=False)
+
     scorer_low_red = models.ForeignKey(User, related_name="scoring_low_red")
     scorer_high_red = models.ForeignKey(User, related_name="scoring_high_red")
     scorer_low_blue = models.ForeignKey(User, related_name="scoring_low_blue")
     scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue")
 
-class MatchEvent(models.Model):
-    ts = models.IntegerField()
-    match = models.ForeignKey(Match)
+class ScoringDevice(models.Model):
     scorer = models.ForeignKey(User)
-    team = models.CharField(max_length=4, choices=(('red', 'red'),('blue', 'blue')))
     tower = models.ForeignKey(Tower)
+
+    #Set automatically to True based on state of match, set manually to False after center not active and done scoring center.
+    on_center = models.BooleanField(default=False)
+
+class ScoringSystem(models.Model):
+    current_match = models.ForeignKey(Match)
+
+class MatchEvent(models.Model):
+    match = models.ForeignKey(Match)
+    microseconds = models.BigIntegerField()
+    scorer = models.ForeignKey(User)
+    tower = models.ForeignKey(Tower)
+    alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
     LEVEL_CHOICES=((1, 'Low GV'),(2, 'High GV'),(3, 'AV'))
     level = models.IntegerField(choices=LEVEL_CHOICES)
-
-
