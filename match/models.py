@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 
 from tournament.models import Team
 
+SCORE_SETTINGS = { \
+        1: 5,
+        2: 10,
+        3: 20,
+    }
+
 ALLIANCE_CHOICES = (('red', 'red'), ('blue', 'blue'), ('center', 'center'))
 class Tower(models.Model):
     TOWER_CHOICES = ( \
@@ -18,7 +24,8 @@ class Tower(models.Model):
 #    alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
 
 class TowerLevel(models.Model):
-    level = models.IntegerField(choices=((1, '1'), (2, '1')))
+    tower = models.ForeignKey(Tower)
+    level = models.IntegerField(choices=((1, '1'), (2, '2')))
     lighting_controller_id = models.IntegerField()
 
     STATE_CHOICES = ( \
@@ -29,6 +36,9 @@ class TowerLevel(models.Model):
             ('purple', 'purple'),
         )
     state = models.CharField(max_length=6, choices=STATE_CHOICES)
+
+    class Meta:
+        unique_together = ('tower', 'level')
 
 class Match(models.Model):
     time = models.DateTimeField()

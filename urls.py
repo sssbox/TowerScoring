@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'views.home', name='home'),
     # url(r'^scoring/', include('foo.urls')),
-
+    url(r'^match/', include('match.urls')),
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
