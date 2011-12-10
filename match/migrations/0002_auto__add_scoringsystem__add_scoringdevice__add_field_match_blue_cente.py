@@ -1,0 +1,193 @@
+# encoding: utf-8
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        
+        # Adding model 'ScoringSystem'
+        db.create_table('match_scoringsystem', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('current_match', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['match.Match'])),
+        ))
+        db.send_create_signal('match', ['ScoringSystem'])
+
+        # Adding model 'ScoringDevice'
+        db.create_table('match_scoringdevice', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('scorer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('tower', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['match.Tower'])),
+            ('on_center', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('match', ['ScoringDevice'])
+
+        # Adding field 'Match.blue_center_active'
+        db.add_column('match_match', 'blue_center_active', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
+
+        # Adding field 'Match.red_center_active'
+        db.add_column('match_match', 'red_center_active', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
+
+        # Deleting field 'Tower.alliance'
+        db.delete_column('match_tower', 'alliance')
+
+        # Deleting field 'MatchEvent.team'
+        db.delete_column('match_matchevent', 'team')
+
+        # Deleting field 'MatchEvent.ts'
+        db.delete_column('match_matchevent', 'ts')
+
+        # Adding field 'MatchEvent.microseconds'
+        db.add_column('match_matchevent', 'microseconds', self.gf('django.db.models.fields.BigIntegerField')(default=999), keep_default=False)
+
+        # Adding field 'MatchEvent.alliance'
+        db.add_column('match_matchevent', 'alliance', self.gf('django.db.models.fields.CharField')(default='center', max_length=6), keep_default=False)
+
+
+    def backwards(self, orm):
+        
+        # Deleting model 'ScoringSystem'
+        db.delete_table('match_scoringsystem')
+
+        # Deleting model 'ScoringDevice'
+        db.delete_table('match_scoringdevice')
+
+        # Deleting field 'Match.blue_center_active'
+        db.delete_column('match_match', 'blue_center_active')
+
+        # Deleting field 'Match.red_center_active'
+        db.delete_column('match_match', 'red_center_active')
+
+        # Adding field 'Tower.alliance'
+        db.add_column('match_tower', 'alliance', self.gf('django.db.models.fields.CharField')(default='center', max_length=6), keep_default=False)
+
+        # Adding field 'MatchEvent.team'
+        db.add_column('match_matchevent', 'team', self.gf('django.db.models.fields.CharField')(default='center', max_length=4), keep_default=False)
+
+        # Adding field 'MatchEvent.ts'
+        db.add_column('match_matchevent', 'ts', self.gf('django.db.models.fields.IntegerField')(default=datetime.datetime(2011, 12, 9, 1, 2, 27, 89004)), keep_default=False)
+
+        # Deleting field 'MatchEvent.microseconds'
+        db.delete_column('match_matchevent', 'microseconds')
+
+        # Deleting field 'MatchEvent.alliance'
+        db.delete_column('match_matchevent', 'alliance')
+
+
+    models = {
+        'auth.group': {
+            'Meta': {'object_name': 'Group'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+        },
+        'auth.permission': {
+            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
+            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        'auth.user': {
+            'Meta': {'object_name': 'User'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+        },
+        'contenttypes.contenttype': {
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'match.match': {
+            'Meta': {'object_name': 'Match'},
+            'actual_start': ('django.db.models.fields.DateTimeField', [], {}),
+            'blue_1': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_blue_1'", 'to': "orm['tournament.Team']"}),
+            'blue_1_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_1_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_blue_2'", 'to': "orm['tournament.Team']"}),
+            'blue_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'blue_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'blue_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'red_1': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_red_1'", 'to': "orm['tournament.Team']"}),
+            'red_1_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_1_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_red_2'", 'to': "orm['tournament.Team']"}),
+            'red_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'red_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'red_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'scorer_high_blue': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'scoring_high_blue'", 'to': "orm['auth.User']"}),
+            'scorer_high_red': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'scoring_high_red'", 'to': "orm['auth.User']"}),
+            'scorer_low_blue': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'scoring_low_blue'", 'to': "orm['auth.User']"}),
+            'scorer_low_red': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'scoring_low_red'", 'to': "orm['auth.User']"}),
+            'time': ('django.db.models.fields.DateTimeField', [], {})
+        },
+        'match.matchevent': {
+            'Meta': {'object_name': 'MatchEvent'},
+            'alliance': ('django.db.models.fields.CharField', [], {'max_length': '6'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.IntegerField', [], {}),
+            'match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
+            'microseconds': ('django.db.models.fields.BigIntegerField', [], {}),
+            'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+        },
+        'match.scoringdevice': {
+            'Meta': {'object_name': 'ScoringDevice'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'on_center': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+        },
+        'match.scoringsystem': {
+            'Meta': {'object_name': 'ScoringSystem'},
+            'current_match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        'match.tower': {
+            'Meta': {'object_name': 'Tower'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '9'})
+        },
+        'match.towerlevel': {
+            'Meta': {'object_name': 'TowerLevel'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.IntegerField', [], {}),
+            'lighting_controller_id': ('django.db.models.fields.IntegerField', [], {}),
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '6'})
+        },
+        'tournament.team': {
+            'Meta': {'object_name': 'Team'},
+            'av_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'gv_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'have_av': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'have_gv': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'number': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'school': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'sponsors': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        }
+    }
+
+    complete_apps = ['match']
