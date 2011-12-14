@@ -22,6 +22,8 @@ class Tower(models.Model):
     name = models.CharField(max_length=9, choices=TOWER_CHOICES, unique=True)
 
 #    alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
+    def __unicode__(self):
+        return self.name
 
 class TowerLevel(models.Model):
     tower = models.ForeignKey(Tower)
@@ -40,9 +42,13 @@ class TowerLevel(models.Model):
     class Meta:
         unique_together = ('tower', 'level')
 
+    def __unicode__(self):
+        return str(self.tower) + ' ring ' + str(self.level)
+
 class Match(models.Model):
+    is_practice = models.BooleanField(default=False)
     time = models.DateTimeField()
-    actual_start = models.DateTimeField()
+    actual_start = models.DateTimeField(null=True, blank=True)
 
     red_1 = models.ForeignKey(Team, related_name="as_red_1")
     red_2 = models.ForeignKey(Team, related_name="as_red_2")
@@ -68,10 +74,13 @@ class Match(models.Model):
     blue_center_active = models.BooleanField(default=False)
     red_center_active = models.BooleanField(default=False)
 
-    scorer_low_red = models.ForeignKey(User, related_name="scoring_low_red")
-    scorer_high_red = models.ForeignKey(User, related_name="scoring_high_red")
-    scorer_low_blue = models.ForeignKey(User, related_name="scoring_low_blue")
-    scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue")
+    scorer_low_red = models.ForeignKey(User, related_name="scoring_low_red", null=True, blank=True)
+    scorer_high_red = models.ForeignKey(User, related_name="scoring_high_red", null=True, blank=True)
+    scorer_low_blue = models.ForeignKey(User, related_name="scoring_low_blue", null=True, blank=True)
+    scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue", null=True, blank=True)
+
+    def __unicode__(self):
+        return 'Match ' + str(self.id)
 
 class ScoringDevice(models.Model):
     scorer = models.ForeignKey(User)

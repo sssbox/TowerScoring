@@ -95,6 +95,7 @@ def score_event(request):
     me.save()
 
     update_from_match_event(me)
+    return HttpResponse(json.dumps({'success': True}), 'application/json')
 
 @staff_member_required
 def finished_scoring_center(request):
