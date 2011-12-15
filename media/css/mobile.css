@@ -1,0 +1,21 @@
+html, body { height: 100%; margin: 0; padding: 0; }
+a img { border: none; }
+img a { border: none; }
+img { border: none; }
+
+.cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
+
+.red { background: #f00; }
+.blue { background: #00f; }
+
+.scoring_col { float: left; }
+
+.white_font { color: #fff; }
+
+/* 
+.left_scoring_col
+.right_scoring_col
+
+.scoring_cell { float: left; }
+.second { float: left; }
+*/

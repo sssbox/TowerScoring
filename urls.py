@@ -8,7 +8,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'views.home', name='home'),
+    url(r'^$', 'views.index', name='index'),
+    url(r'^test_ajax$', 'views.test_ajax', name='test_ajax'),
     # url(r'^scoring/', include('foo.urls')),
     url(r'^match/', include('match.urls')),
     # Uncomment the next line to enable the admin:
@@ -18,9 +19,9 @@ urlpatterns = patterns('',
 if settings.DEBUG:
     urlpatterns += patterns('',
        (r'^site_media/version[^/]+/(?P<path>.*)$', 'django.views.static.serve', \
-            {'document_root': settings.MEDIA_ROOT}),
+            {'document_root': settings.STATIC_ROOT}),
         (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', \
-            {'document_root': settings.MEDIA_ROOT}),
+            {'document_root': settings.STATIC_ROOT}),
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', \
                 {'document_root': settings.ADMIN_MEDIA_ROOT}),
     )

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/site_media/css/mobile.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block entire_body %}
+
+    <div class="title-bar">
+    {% if is_red %}Red{% else %}Blue{% endif %} 
+    {% if is_low %}Short{% else %}Tall{% endif %} Controller
+    </div>
+
+    <div class="controller-area">
+        <div class="normal-scoring-state">
+
+            <div class="left_scoring_col scoring_col">
+                <div class="scoring_cell {{ non_primary }}">AV Scoring cell</div>
+                {% if not is_low %}
+                <div class="scoring_cell {{ non_primary }}">High GV Scoring cell</div>
+                {% endif %}
+                <div class="scoring_cell {{ non_primary }}">Low GV Scoring cell</div>
+            </div>
+            <div class="right_scoring_col scoring_col">
+                <div class="scoring_cell {{ primary }}">AV Scoring cell</div>
+                {% if not is_low %}
+                <div class="scoring_cell {{ primary }}">High GV Scoring cell</div>
+                {% endif %}
+                <div class="scoring_cell {{ primary }}">Low GV Scoring cell</div>
+            </div>
+        </div>
+
+        <div class="center-scoring-state" style="display:none;">
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+    </div>
+
+{% endblock entire_body %}
+
+{% block script %}
+<script type="text/javascript">
+    $('.scoring_cell').click(function(e){
+        e.preventDefault();
+        obj = $(this) ;
+        $.ajax({
+            url: "{% url test_ajax %}",
+            success: function(){
+                obj.toggleClass("white_font") ;
+            },
+            cache: false
+        });
+    });
+</script>
+{% endblock %}

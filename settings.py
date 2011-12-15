@@ -150,11 +150,11 @@ MEDIA_URL = BASE_URL + '/user_media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = BASE_PATH + '/site_media/'
+STATIC_ROOT = BASE_PATH + '/media/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = BASE_PATH + '/site_media/'
+STATIC_URL = BASE_URL + '/media/'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
