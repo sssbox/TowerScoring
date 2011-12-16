@@ -23,10 +23,40 @@ GRANT ALL PRIVILEGES ON scoring.* TO 'scoring'@'localhost';
 
 # install django1.3.1 (http://www.djangoproject.com/download/1.3.1/tarball/
 
-python manage.py syncdb
+python manage.py syncdb #Create superuser when prompted
 python manage.py migrate
 
 # ~~~ Optionally you may add things to local_settings.py file to override settings        locally--this does not get tracked so they will only effect your install.
 
-python manage.py runserver
+python manage.py runserver_plus <your ip>:8000
 
+
+Getting some stuff to work:
+log into http://<your ip>:8000/admin/
+click 'Users'
+
+Add user "scorer1" (with a short password) click "Save and continue editing"
+Make that user "Staff status" and "save"
+# If you want you can repeat three more times for extra scorers
+
+
+Add user "timer" (with a good password) click "Save and continue editing"
+Make user "Staff status" AND add them to the group "Timers" before saving
+
+
+Click on "home" in the nav bar to get back to the original logged in page.
+Click on the "add" button to the right of "scoring devices"
+Select a scorer and add them to a non-center tower that has not yet been assigned. (and Save) (eventually this will be controllable from the main Scorekeeper's (not scorer) control panel)
+
+Open a different browser (Firefox vs Chrome (incognito doesn't work with django's dev server for some reason)) and go to http://<your ip>:8000/
+Log in as 'timer'
+
+Use you're phone on your wifi to go to http://<your ip>:8000/ and log in as a scorer.
+
+In the original admin interface:
+Go back to "Home" and Select "Match"
+Edit "Match 1"
+Click "Today" and "Now" by "Actual start" and save and continue editing. You should see the timer start.
+
+To test the scorer's "persistent" connection set the "* center active start" time to be "Today" and "now"
+After 30 seconds, a link should appear on the scoring device to return back to the normal scoring screen after the scorer is finished scoring the center tower.
