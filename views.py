@@ -44,8 +44,6 @@ def scorekeeper(request):
 @staff_member_required
 def timer(request):
     match = ScoringSystem.objects.all()[0].current_match
-    timer = datetime.datetime.now() - match.actual_start
-    timer = str(timer.seconds/60) + ':' + str(timer.seconds%60)
     try:
         timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
         if timer.days < 0:
