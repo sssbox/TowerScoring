@@ -33,6 +33,12 @@ all_teams = [ \
 
 
 class Migration(DataMigration):
+    depends_on = (
+            ('tournament', '0002_auto__add_field_team_location'),
+        )
+    needed_by = (
+            ('tournament', '0003_auto__add_field_team_match_points__add_field_team_highest_match_points'),
+        )
 
     def forwards(self, orm):
         if not db.dry_run:
