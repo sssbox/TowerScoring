@@ -40,10 +40,13 @@ def update_from_match_event(me):
                 if not alliance_towers_uncharged.exists() \
                         and ((alliance == 'blue' and not match.blue_center_active) \
                                 or (alliance == 'red' and not match.red_center_active)):
+#TODO if other timer is running and there is < 5 seconds left, set cur to other_time+5
                     if alliance == 'blue':
                         match.blue_center_active = True
+                        match.blue_center_active_start = datetime.datetime.now()
                     else:
                         match.red_center_active = True
+                        match.red_center_active_start = datetime.datetime.now()
                     match.save()
                     alliance_towers.update(state='off')
                     center = Tower.objects.get(name='center')
@@ -104,3 +107,18 @@ def finished_scoring_center(request):
         scoring_device.on_center = False
         scoring_device.save()
     return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+@staff_member_required
+def check_scorer_status(request):
+    scoring_device = ScoringDevice.objects.get(scorer=request.user)
+    match = ScoringSystem.objects.all()[0].current_match
+    if '_red' in scoring_device.tower.name:
+        start = match.red_center_active_start
+    else:
+        start = match.blue_center_active_start
+    try:
+        diff = (start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
+        if diff.days < 0: current_state = 'normal'
+        else: current_state = 'center'
+    except: current_state = 'normal'
+    return HttpResponse(json.dumps({'current_state': current_state}), 'application/json')

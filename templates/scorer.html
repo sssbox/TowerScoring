@@ -31,11 +31,19 @@
         </div>
 
         <div class="center-scoring-state" style="display:none;">
+            scoring center
         </div>
     </div>
 
 
     <div class="footer-bar">
+        <div class="normal-scoring-state">
+        </div>
+        <div class="center-scoring-state" style="display:none;">
+            <div class="return-to-normal" style="display:none;">
+                <a href="#" id="return_to_normal_link">Done Scoring Center</a>
+            </div>
+        </div>
     </div>
 
 {% endblock entire_body %}
@@ -47,11 +55,52 @@
         obj = $(this) ;
         $.ajax({
             url: "{% url test_ajax %}",
+            type: "GET",
             success: function(){
                 obj.toggleClass("white_font") ;
             },
             cache: false
         });
     });
+    var current_state = 'normal' ;
+    $('#return_to_normal_link').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "{% url match_finished_scoring_center %}",
+            type: "GET",
+            cache: false,
+            success: function(data){
+                if(data.success==true)
+                {
+                    $(".return-to-normal").hide() ;
+                    $(".center-scoring-state").hide() ;
+                    $(".normal-scoring-state").show() ;
+                    current_state = 'normal' ;
+                }
+            }
+        });
+    });
+    function check_status()
+    {
+        $.ajax({
+            url: "{% url match_check_scorer_status %}",
+            cache: false,
+            success: function(data){
+                if(data.current_state == 'center' && current_state == 'normal')
+                {
+                    $(".normal-scoring-state").hide() ;
+                    $(".center-scoring-state").show() ;
+                    current_state = 'center' ;
+                }
+                if(data.current_state == 'normal' && current_state == 'center')
+                {
+                    $(".return-to-normal").show() ;
+                }
+            }
+        });
+    }
+    setInterval(check_status, 500) ;
+
+
 </script>
 {% endblock %}

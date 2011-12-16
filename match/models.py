@@ -74,6 +74,9 @@ class Match(models.Model):
     blue_center_active = models.BooleanField(default=False)
     red_center_active = models.BooleanField(default=False)
 
+    blue_center_active_start = models.DateTimeField(null=True, blank=True)
+    red_center_active_start = models.DateTimeField(null=True, blank=True)
+
     scorer_low_red = models.ForeignKey(User, related_name="scoring_low_red", null=True, blank=True)
     scorer_high_red = models.ForeignKey(User, related_name="scoring_high_red", null=True, blank=True)
     scorer_low_blue = models.ForeignKey(User, related_name="scoring_low_blue", null=True, blank=True)

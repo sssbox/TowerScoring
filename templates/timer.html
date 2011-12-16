@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block entire_body %}
+<div style="float:left; width:100px;">
+    <div class="blue" id="blue_score">
+        {{ match.blue_score }}
+    </div>
+    <div class="blue" id="blue_timer">
+        {{ match.blue_timer }}
+    </div>
+</div>
+<div style="float:left; width:100px;">
+    <div class="timer">
+        {{ timer }}
+    </div>
+</div>
+<div style="float:left; width:100px;">
+    <div class="red" id="red_score">
+        {{ match.red_score }}
+    </div>
+    <div class="red" id="red_timer">
+        {{ match.red_timer }}
+    </div>
+</div>
+{% endblock entire_body %}
+
+{% block script %}
+<script type="text/javascript">
+    function update_display()
+    {
+        $.ajax({
+            url: "{% url timer %}",
+            method: "POST",
+            cache: false,
+            success: function(data){
+                $(".timer").html(data.timer) ;
+                $("#blue_score").html(data.match.blue_score) ;
+                $("#red_score").html(data.match.red_score) ;
+                $("#blue_timer").html(data.blue_timer) ;
+                $("#red_timer").html(data.red_timer) ;
+            }
+        });
+    }
+    setInterval(update_display, 100) ;
+</script>
+{% endblock %}
