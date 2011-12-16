@@ -1,5 +1,5 @@
 *.pyc
-settings_local.py*
+local_settings.py*
 *.log
 log/
 apache/
