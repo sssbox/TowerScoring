@@ -78,9 +78,13 @@ class Match(models.Model):
     red_center_active_start = models.DateTimeField(null=True, blank=True)
 
     scorer_low_red = models.ForeignKey(User, related_name="scoring_low_red", null=True, blank=True)
+    scorer_low_red_confirmed = models.BooleanField(default=False)
     scorer_high_red = models.ForeignKey(User, related_name="scoring_high_red", null=True, blank=True)
+    scorer_high_red_confirmed = models.BooleanField(default=False)
     scorer_low_blue = models.ForeignKey(User, related_name="scoring_low_blue", null=True, blank=True)
+    scorer_low_blue_confirmed = models.BooleanField(default=False)
     scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue", null=True, blank=True)
+    scorer_high_blue_confirmed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return 'Match ' + str(self.id)

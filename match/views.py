@@ -109,16 +109,44 @@ def finished_scoring_center(request):
     return HttpResponse(json.dumps({'success': True}), 'application/json')
 
 @staff_member_required
-def check_scorer_status(request):
+def finished_scoring_match(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
     match = ScoringSystem.objects.all()[0].current_match
-    if '_red' in scoring_device.tower.name:
-        start = match.red_center_active_start
-    else:
-        start = match.blue_center_active_start
+    if scoring_device.tower.name == 'low_red':
+        match.scorer_low_red_confirmed = True
+    if scoring_device.tower.name == 'high_red':
+        match.scorer_high_red_confirmed = True
+    if scoring_device.tower.name == 'low_blue':
+        match.scorer_low_blue_confirmed = True
+    if scoring_device.tower.name == 'high_blue':
+        match.scorer_high_blue_confirmed = True
+    match.save()
+    return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+@staff_member_required
+def check_scorer_status(request):
+    scoring_device = ScoringDevice.objects.get(scorer=request.user)
+    current_state, current_match = '', ''
     try:
-        diff = (start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
-        if diff.days < 0: current_state = 'normal'
-        else: current_state = 'center'
-    except: current_state = 'normal'
-    return HttpResponse(json.dumps({'current_state': current_state}), 'application/json')
+        match = ScoringSystem.objects.all()[0].current_match
+        current_match = str(match.id)
+        if not match.actual_start:
+            current_state = 'prematch'
+        else:
+            timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
+            if timer.days < 0:
+                current_state = 'match_done'
+    except:
+        current_state, current_match = 'no_match', ''
+    if not current_state:
+        if '_red' in scoring_device.tower.name:
+            center_start = match.red_center_active_start
+        else:
+            center_start = match.blue_center_active_start
+        try:
+            diff = (center_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
+            if diff.days < 0: current_state = 'normal'
+            else: current_state = 'center'
+        except: current_state = 'normal'
+    return HttpResponse(json.dumps({'current_state': current_state,  \
+            'current_match':current_match}), 'application/json')

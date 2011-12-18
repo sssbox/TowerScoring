@@ -7,12 +7,25 @@
 {% block entire_body %}
 
     <div class="title-bar">
-    {% if is_red %}Red{% else %}Blue{% endif %} 
-    {% if is_low %}Short{% else %}Tall{% endif %} Controller
+        {% if is_red %}Red{% else %}Blue{% endif %} 
+        {% if is_low %}Short{% else %}Tall{% endif %} Controller Match 
+        <span class="match_number">x</span>
     </div>
 
     <div class="controller-area">
-        <div class="normal-scoring-state">
+        <div class="initial-state state">
+            Waiting for Server.
+        </div>
+        <div class="prematch-state state" style="display: none;">
+            Prematch for match <span class="match_number">x</span>
+        </div>
+        <div class="no-match-state state" style="display: none;">
+            No match loaded into scoring device yet.
+        </div>
+        <div class="match-done-state state" style="display: none;">
+            Match <span class="match_number">x</span> done. Waiting for next match.
+        </div>
+        <div class="normal-state state" style="display: none;">
 
             <div class="left_scoring_col scoring_col">
                 <div class="scoring_cell {{ non_primary }}">AV Scoring cell</div>
@@ -30,16 +43,22 @@
             </div>
         </div>
 
-        <div class="center-scoring-state" style="display:none;">
+        <div class="center-state state" style="display:none;">
             scoring center
         </div>
     </div>
 
 
     <div class="footer-bar">
-        <div class="normal-scoring-state">
+        <div class="normal-state state">
+            <div class="confirm-match-score" style="display:none;">
+                <a href="#" id="confirm_match_link">Done Scoring Match</a>
+            </div>
         </div>
-        <div class="center-scoring-state" style="display:none;">
+        <div class="center-state state" style="display:none;">
+            <div class="confirm-match-score" style="display:none;">
+                <a href="#" id="confirm_match_link">Done Scoring Match</a>
+            </div>
             <div class="return-to-normal" style="display:none;">
                 <a href="#" id="return_to_normal_link">Done Scoring Center</a>
             </div>
@@ -62,7 +81,7 @@
             cache: false
         });
     });
-    var current_state = 'normal' ;
+    var current_state = '' ;
     $('#return_to_normal_link').click(function(e){
         e.preventDefault();
         $.ajax({
@@ -72,10 +91,27 @@
             success: function(data){
                 if(data.success==true)
                 {
-                    $(".return-to-normal").hide() ;
-                    $(".center-scoring-state").hide() ;
-                    $(".normal-scoring-state").show() ;
+                    $("div.return-to-normal").hide() ;
+                    $("div.state").hide() ;
+                    $("div.normal-state").show() ;
                     current_state = 'normal' ;
+                }
+            }
+        });
+    });
+    $('#confirm_match_link').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "{% url match_finished_scoring_match %}",
+            type: "GET",
+            cache: false,
+            success: function(data){
+                if(data.success==true)
+                {
+                    $("div.confirm-match-score").hide() ;
+                    $("div.state").hide() ;
+                    $("div.match-done-state").show() ;
+                    current_state = 'match_done' ;
                 }
             }
         });
@@ -86,21 +122,49 @@
             url: "{% url match_check_scorer_status %}",
             cache: false,
             success: function(data){
-                if(data.current_state == 'center' && current_state == 'normal')
+                $('span.match_number').html(data.current_match) ;
+                if(data.current_state == 'normal' && current_state != 'normal' && current_state != 'center')
                 {
-                    $(".normal-scoring-state").hide() ;
-                    $(".center-scoring-state").show() ;
+                    $("div.state").hide() ;
+                    $("div.normal-state").show() ;
+                    $("div.confirm-match-score").hide() ;
+                    current_state = 'normal' ;
+                }
+                if(data.current_state == 'center' && current_state != 'center')
+                {
+                    $("div.state").hide() ;
+                    $("div.return-to-normal").hide() ;
+                    $("div.confirm-match-score").hide() ;
+                    $("div.center-state").show() ;
                     current_state = 'center' ;
                 }
-                if(data.current_state == 'normal' && current_state == 'center')
+                if(data.current_state == 'prematch' && current_state != 'prematch')
                 {
-                    $(".return-to-normal").show() ;
+                    $("div.state").hide() ;
+                    $("div.prematch-state").show() ;
+                    current_state = 'prematch' ;
+                }
+                if(data.current_state == 'no_match' && current_state != 'no_match')
+                {
+                    $("div.state").hide() ;
+                    $("div.no-match-state").show() ;
+                    current_state = 'no_match' ;
+                }
+                if(data.current_state != 'center' && current_state == 'center')
+                {
+                    $("div.initial-state").hide() ;
+                    $("div.return-to-normal").show() ;
+                }
+                if(data.current_state == 'match_done' && current_state != 'match_done')
+                {
+                    $("div.initial-state").hide() ;
+                    $("div.confirm-match-score").show() ;
                 }
             }
         });
     }
     setInterval(check_status, 500) ;
-
+    check_status();
 
 </script>
 {% endblock %}

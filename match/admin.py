@@ -11,6 +11,7 @@ class MatchEventAdmin(admin.ModelAdmin):
     list_display = ('match', 'scorer', 'tower', 'alliance', 'level')
     list_filter = ('match', )
 
+admin.site.register(ScoringSystem)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(ScoringDevice, ScoringDeviceAdmin)
 admin.site.register(MatchEvent, MatchEventAdmin)
