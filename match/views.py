@@ -2,16 +2,10 @@ import datetime
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from models import *
+from utils.time import get_microseconds
+
 try: import simplejson as json
 except: import json
-
-def get_microseconds():
-    now = datetime.datetime.now()
-    ms = now.microsecond
-    ms += now.second * 1000000
-    ms += now.minute * 60000000
-    ms += now.hour * 3600000000
-    return ms
 
 #TODO create celery to automatically start the warning sequence at end of center tower activation
 # or do pseudo cron on status requests from score/timer displays, etc.
@@ -123,7 +117,11 @@ def finished_scoring_match(request):
 @staff_member_required
 def check_scorer_status(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
-    tower_name = scoring_device.tower.name
+    scoring_device.last_contact = datetime.datetime.now()
+    scoring_device.save()
+    try: tower_name = scoring_device.tower.name
+    except:
+        return HttpResponse(json.dumps({'current_state':'no_match','current_match':''}),'application/json')
     current_state, current_match = '', ''
     try:
         match = ScoringSystem.objects.all()[0].current_match
@@ -141,8 +139,7 @@ def check_scorer_status(request):
                     current_state = 'match_done_confirmed'
                 else:
                     current_state = 'match_done_not_confirmed'
-    except:
-        current_state, current_match = 'no_match', ''
+    except: current_state, current_match = 'no_match', ''
     if not current_state:
         if '_red' in tower_name:
             center_start = match.red_center_active_start

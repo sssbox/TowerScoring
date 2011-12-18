@@ -1,0 +1,31 @@
+<div class="{% if 'Red' in name %}light-red{% else %}light-blue{% endif %}">
+    {{ name }} Tower
+</div>
+
+<br /><br />
+
+Scorer: 
+<select>
+    <option value="0">Select a Scorer</option>
+    {% if tc.scorer %}
+    <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
+    {% endif %}
+    {% for scorer in sd_avail %}
+    <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
+    {% endfor %}
+</select>
+
+<br /><br />
+
+Submitted :
+<span class="confirmed {% if tc.confirmed %}green{% else %}red{% endif %}">
+    &nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+
+<br /><br />
+
+Last Contact: {{ tc.last_contact }}
+
+<br /><br />
+
+Last Event Recieved: {{ tc.last_event }}

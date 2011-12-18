@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from tournament.models import Team
-
+from utils.time import elapsed_time, get_microseconds
 SCORE_SETTINGS = { \
         1: 5,
         2: 10,
@@ -90,14 +90,30 @@ class Match(models.Model):
         return 'Match ' + str(self.id)
 
 class ScoringDevice(models.Model):
-    scorer = models.ForeignKey(User)
-    tower = models.ForeignKey(Tower)
+    scorer = models.OneToOneField(User)
+    tower = models.OneToOneField(Tower, blank=True, null=True)
 
     #Set automatically to True based on state of match, set manually to False after center not active and done scoring center.
     on_center = models.BooleanField(default=False)
+    last_contact = models.DateTimeField(default=datetime.datetime.now)
+
+    def __unicode__(self):
+        try:  return str(self.scorer) + ' scoring ' + str(self.tower)
+        except:  return str(self.scorer)
+
+    def get_stats(self, confirmed):
+        stats = {}
+        stats['scorer'] = self.scorer.username
+        stats['scorer_id'] = self.scorer.id
+        stats['confirmed'] = confirmed
+        diff = datetime.datetime.now() - self.last_contact
+        stats['last_contact'] = elapsed_time(diff.seconds, separator=', ')
+        diff = get_microseconds()-self.scorer.matchevent_set.all().latest('microseconds').microseconds
+        stats['last_event'] = elapsed_time(diff/1000000, separator=', ')
+        return stats
 
 class ScoringSystem(models.Model):
-    current_match = models.ForeignKey(Match)
+    current_match = models.ForeignKey(Match, blank=True, null=True)
 
 class MatchEvent(models.Model):
     match = models.ForeignKey(Match)

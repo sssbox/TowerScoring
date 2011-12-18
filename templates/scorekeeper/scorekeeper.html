@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/site_media/css/scorekeeper.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block entire_body %}
+
+<div class="float ninth"> 
+    {% with tc=towers.high_blue name="High Blue" %}
+    {% include "scorekeeper/tower.html" %}
+    {% endwith %}
+</div>
+<div class="float ninth"> 
+</div>
+<div class="float ninth"> 
+    {% with tc=towers.high_red name="High Red" %}
+    {% include "scorekeeper/tower.html" %}
+    {% endwith %}
+</div>
+
+<br class="cl" />
+
+<div class="float light-blue ninth"> 
+</div>
+<div class="float ninth"> 
+</div>
+<div class="float light-red ninth">
+</div>
+
+<br class="cl" />
+
+<div class="float ninth"> 
+    {% with tc=towers.low_red name="Low Red" %}
+    {% include "scorekeeper/tower.html" %}
+    {% endwith %}
+</div>
+<div class="float ninth"> 
+</div>
+<div class="float ninth"> 
+    {% with tc=towers.low_blue name="Low Blue" %}
+    {% include "scorekeeper/tower.html" %}
+    {% endwith %}
+</div>
+
+{% endblock entire_body %}

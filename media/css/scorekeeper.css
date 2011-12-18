@@ -1,0 +1,18 @@
+html, body { height: 100%; margin: 0; padding: 0; }
+a img { border: none; }
+img a { border: none; }
+img { border: none; }
+
+.cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
+
+.red { background: #f00; }
+.blue { background: #00f; }
+.light-red { background: #f55; }
+.light-blue { background: #55f; }
+.green { background: #0f0; }
+
+.confirmed { height:20px; }
+
+.float { float: left; }
+
+.ninth { width:300px; height:200px; padding:20px; }

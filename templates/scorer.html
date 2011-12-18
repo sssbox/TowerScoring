@@ -123,6 +123,10 @@
             cache: false,
             success: function(data){
                 $('span.match_number').html(data.current_match) ;
+                if(current_state == 'no_match_reload' && data.current_state != 'no_match')
+                {
+                    location.reload() ;
+                }
                 if((data.current_state == 'normal' || data.current_state == 'match_done_not_confirmed')
                         && current_state != 'normal' && current_state != 'center')
                 {
@@ -152,7 +156,7 @@
                     $("div.prematch-state").show() ;
                     current_state = 'prematch' ;
                 }
-                if(data.current_state == 'no_match' && current_state != 'no_match')
+                if(data.current_state == 'no_match' && (current_state != 'no_match' && current_state != 'no_match_reload'))
                 {
                     $("div.state").hide() ;
                     $("div.no-match-state").show() ;
@@ -173,6 +177,11 @@
     }
     setInterval(check_status, 500) ;
     check_status();
+    {% if no_match %}
+        $("div.state").hide() ;
+        $("div.no-match-state").show() ;
+        current_state = 'no_match_reload' ;
+    {% endif %}
 
 </script>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 
 from match.models import ScoringDevice, ScoringSystem
+
 import datetime
 try: import simplejson as json
 except: import json
@@ -27,19 +28,37 @@ def scorer(request):
         return HttpResponse('Error, you are not set up as a scorer, contact the scorekeeper', \
                 "text/plain")
 
-    is_red = '_red' in scoring_device.tower.name
-    is_low = 'low_' in scoring_device.tower.name
-    if is_red:
-        primary = 'red'
-        non_primary = 'blue'
-    else:
-        primary = 'blue'
-        non_primary = 'red'
+    try:
+        is_red = '_red' in scoring_device.tower.name
+        is_low = 'low_' in scoring_device.tower.name
+        if is_red:
+            primary = 'red'
+            non_primary = 'blue'
+        else:
+            primary = 'blue'
+            non_primary = 'red'
+    except: no_match = True
     return render_to_response('scorer.html', locals())
 
 @staff_member_required
 def scorekeeper(request):
-    return render_to_response('scorekeeper.html', locals())
+    try: ss = ScoringSystem.objects.all()[0]
+    except:
+        ss = ScoringSystem()
+        ss.save()
+    try: match = ss.current_match
+    except: match = None
+    sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
+    towers = {}
+    for sd in ScoringDevice.objects.filter(tower__isnull=False):
+        try:
+            if 'high_blue'==sd.tower.name: confirmed = match.scorer_high_blue_confirmed
+            elif 'high_red'==sd.tower.name: confirmed = match.scorer_high_red_confirmed
+            elif 'low_blue'==sd.tower.name: confirmed = match.scorer_low_blue_confirmed
+            elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
+        except: confirmed = False
+        towers[sd.tower.name] = sd.get_stats(confirmed)
+    return render_to_response('scorekeeper/scorekeeper.html', locals())
 
 @staff_member_required
 def timer(request):
@@ -68,9 +87,13 @@ def timer(request):
             seconds = '00' + str(blue_timer.seconds)
             blue_timer = seconds[-2:]
     except: blue_timer = '00'
+    try: red_score = match.red_score
+    except: red_score = 0
+    try: blue_score = match.blue_score
+    except: blue_score = 0
     if request.is_ajax():
         response = {'timer': timer, 'blue_timer': blue_timer, 'red_timer': red_timer, \
-                'match': {'red_score': match.red_score, 'blue_score': match.blue_score}
+                'match': {'red_score': red_score, 'blue_score': blue_score}
             }
         return HttpResponse(json.dumps(response), 'application/json')
     return render_to_response('timer.html', locals())
