@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/site_media/css/mobile.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block entire_body %}
+
+    <div class="title-bar">
+        {% if is_red %}Red{% else %}Blue{% endif %} 
+        {% if is_low %}Short{% else %}Tall{% endif %} Controller Match 
+        <span class="match_number">x</span>
+    </div>
+
+    <div class="controller-area">
+        <div class="initial-state state">
+            Waiting for Server.
+        </div>
+        <div class="prematch-state state" style="display: none;">
+            Prematch for match <span class="match_number">x</span>
+        </div>
+        <div class="no-match-state state" style="display: none;">
+            No match loaded into scoring device yet.
+        </div>
+        <div class="match-done-confirmed-state state" style="display: none;">
+            Match <span class="match_number">x</span> done. Waiting for next match.
+        </div>
+        <div class="normal-state state" style="display: none;">
+
+            <div class="left_scoring_col scoring_col">
+                <div class="scoring_cell {{ non_primary }}">AV Scoring cell</div>
+                {% if not is_low %}
+                <div class="scoring_cell {{ non_primary }}">High GV Scoring cell</div>
+                {% endif %}
+                <div class="scoring_cell {{ non_primary }}">Low GV Scoring cell</div>
+            </div>
+            <div class="right_scoring_col scoring_col">
+                <div class="scoring_cell {{ primary }}">AV Scoring cell</div>
+                {% if not is_low %}
+                <div class="scoring_cell {{ primary }}">High GV Scoring cell</div>
+                {% endif %}
+                <div class="scoring_cell {{ primary }}">Low GV Scoring cell</div>
+            </div>
+        </div>
+
+        <div class="center-state state" style="display:none;">
+            scoring center
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+        <div class="normal-state state">
+            <div class="confirm-match-score" style="display:none;">
+                <a href="#" id="confirm_match_link">Done Scoring Match</a>
+            </div>
+        </div>
+        <div class="center-state state" style="display:none;">
+            <div class="confirm-match-score" style="display:none;">
+                <a href="#" id="confirm_match_link">Done Scoring Match</a>
+            </div>
+            <div class="return-to-normal" style="display:none;">
+                <a href="#" id="return_to_normal_link">Done Scoring Center</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock entire_body %}
+
+{% block script %}
+<script type="text/javascript">
+    {% include "mobile_scorer/script.html" %}
+</script>
+{% endblock %}

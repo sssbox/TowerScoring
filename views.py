@@ -38,7 +38,7 @@ def scorer(request):
             primary = 'blue'
             non_primary = 'red'
     except: no_match = True
-    return render_to_response('scorer.html', locals())
+    return render_to_response('mobile_scorer/scorer.html', locals())
 
 @staff_member_required
 def scorekeeper(request):
