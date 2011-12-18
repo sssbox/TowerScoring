@@ -111,21 +111,19 @@ def finished_scoring_center(request):
 @staff_member_required
 def finished_scoring_match(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
+    tower_name = scoring_device.tower.name
     match = ScoringSystem.objects.all()[0].current_match
-    if scoring_device.tower.name == 'low_red':
-        match.scorer_low_red_confirmed = True
-    if scoring_device.tower.name == 'high_red':
-        match.scorer_high_red_confirmed = True
-    if scoring_device.tower.name == 'low_blue':
-        match.scorer_low_blue_confirmed = True
-    if scoring_device.tower.name == 'high_blue':
-        match.scorer_high_blue_confirmed = True
+    if   tower_name == 'low_red':    match.scorer_low_red_confirmed = True
+    elif tower_name == 'high_red':   match.scorer_high_red_confirmed = True
+    elif tower_name == 'low_blue':   match.scorer_low_blue_confirmed = True
+    elif tower_name == 'high_blue':  match.scorer_high_blue_confirmed = True
     match.save()
     return HttpResponse(json.dumps({'success': True}), 'application/json')
 
 @staff_member_required
 def check_scorer_status(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
+    tower_name = scoring_device.tower.name
     current_state, current_match = '', ''
     try:
         match = ScoringSystem.objects.all()[0].current_match
@@ -135,11 +133,18 @@ def check_scorer_status(request):
         else:
             timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
             if timer.days < 0:
-                current_state = 'match_done'
+                if   tower_name == 'low_red':   confirmed = match.scorer_low_red_confirmed
+                elif tower_name == 'high_red':  confirmed = match.scorer_high_red_confirmed
+                elif tower_name == 'low_blue':  confirmed = match.scorer_low_blue_confirmed
+                elif tower_name == 'high_blue': confirmed = match.scorer_high_blue_confirmed
+                if confirmed:
+                    current_state = 'match_done_confirmed'
+                else:
+                    current_state = 'match_done_not_confirmed'
     except:
         current_state, current_match = 'no_match', ''
     if not current_state:
-        if '_red' in scoring_device.tower.name:
+        if '_red' in tower_name:
             center_start = match.red_center_active_start
         else:
             center_start = match.blue_center_active_start

@@ -22,7 +22,7 @@
         <div class="no-match-state state" style="display: none;">
             No match loaded into scoring device yet.
         </div>
-        <div class="match-done-state state" style="display: none;">
+        <div class="match-done-confirmed-state state" style="display: none;">
             Match <span class="match_number">x</span> done. Waiting for next match.
         </div>
         <div class="normal-state state" style="display: none;">
@@ -110,8 +110,8 @@
                 {
                     $("div.confirm-match-score").hide() ;
                     $("div.state").hide() ;
-                    $("div.match-done-state").show() ;
-                    current_state = 'match_done' ;
+                    $("div.match-done-confirmed-state").show() ;
+                    current_state = 'match_done_confirmed' ;
                 }
             }
         });
@@ -123,11 +123,13 @@
             cache: false,
             success: function(data){
                 $('span.match_number').html(data.current_match) ;
-                if(data.current_state == 'normal' && current_state != 'normal' && current_state != 'center')
+                if((data.current_state == 'normal' || data.current_state == 'match_done_not_confirmed')
+                        && current_state != 'normal' && current_state != 'center')
                 {
                     $("div.state").hide() ;
                     $("div.normal-state").show() ;
-                    $("div.confirm-match-score").hide() ;
+                    if(data.current_state != 'match_done_not_confirmed')
+                        $("div.confirm-match-score").hide() ;
                     current_state = 'normal' ;
                 }
                 if(data.current_state == 'center' && current_state != 'center')
@@ -137,6 +139,12 @@
                     $("div.confirm-match-score").hide() ;
                     $("div.center-state").show() ;
                     current_state = 'center' ;
+                }
+                if(data.current_state == 'match_done_confirmed' && current_state != 'match_done_confirmed')
+                {
+                    $("div.state").hide() ;
+                    $("div.match-done-confirmed-state").show() ;
+                    current_state = 'match_done_confirmed' ;
                 }
                 if(data.current_state == 'prematch' && current_state != 'prematch')
                 {
@@ -155,7 +163,7 @@
                     $("div.initial-state").hide() ;
                     $("div.return-to-normal").show() ;
                 }
-                if(data.current_state == 'match_done' && current_state != 'match_done')
+                if(data.current_state == 'match_done_not_confirmed' && current_state != 'match_done_not_confirmed')
                 {
                     $("div.initial-state").hide() ;
                     $("div.confirm-match-score").show() ;
