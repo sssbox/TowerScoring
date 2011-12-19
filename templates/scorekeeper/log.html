@@ -18,10 +18,18 @@
         </span>
         <span class="float"> on&nbsp;</span>
         <span class="float match_event_tower_1">
-            {% if 'high_' in event.tower.name %}High{% else %}Low{% endif %}
+            {% if 'high_' in event.tower.name %}High{% else %}
+            {% if 'low_' in event.tower.name %}Low{% else %}Center{% endif %}
+            {% endif %}
         </span>
-        <span class="float match_event_tower_2 light-{% if '_red' in event.tower.name %}red{% else %}blue{% endif %}">
-            {% if '_red' in event.tower.name %}Red{% else %}Blue{% endif %}
+        <span class="float match_event_tower_2 {% if 'center' != event.tower.name %}light-{% if '_red' in event.tower.name %}red{% else %}blue{% endif %}{% endif %}">
+            {% if 'center' != event.tower.name %}
+                {% if '_red' in event.tower.name %}Red{% else %}Blue{% endif %}
+            {% else %}&nbsp;{% endif %}
+        </span>
+        <span class="float">&nbsp;&nbsp;</span>
+        <span class="float match_event_delete">
+            <a href="#" class="delete_event_link">Delete</a>
         </span>
     </div>
     <span class="cl"></span>
