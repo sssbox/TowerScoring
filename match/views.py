@@ -152,3 +152,19 @@ def check_scorer_status(request):
         except: current_state = 'normal'
     return HttpResponse(json.dumps({'current_state': current_state,  \
             'current_match':current_match}), 'application/json')
+
+
+# Scorekeeper Functions
+def pick_scorer(request):
+#TODO actually assign the scorer
+#TODO if match isn't over yet, assign this scorer to the current match.
+#TODO make sure that you can unset scorer so that you can shuffle around scorers without a 5th in the system.
+    return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+def select_match(request):
+    ss = ScoringSystem.objects.all()[0]
+    ss.current_match = Match.objects.get(id=request.GET.get('match_id'))
+    ss.save()
+#TODO Return normal status response to update all of the other modules
+#TODO If match isn't over assign current scorers to the match history.
+    return HttpResponse(json.dumps({'success': True}), 'application/json')

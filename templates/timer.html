@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block entire_body %}
+
+<div>
+    <span id="practice">{{ practice }}</span> Match <span id="match_id">{{ match.id }}</span>
+</div>
+<br class="cl" />
 <div style="float:left; width:100px;">
     <div class="blue" id="blue_score">
         {{ match.blue_score }}
@@ -38,6 +43,8 @@
                 $("#red_score").html(data.match.red_score) ;
                 $("#blue_timer").html(data.blue_timer) ;
                 $("#red_timer").html(data.red_timer) ;
+                $("#practice").html(data.practice) ;
+                $("#match_id").html(data.match.id) ;
             }
         });
     }

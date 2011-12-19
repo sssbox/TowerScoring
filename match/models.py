@@ -70,6 +70,8 @@ class Match(models.Model):
     blue_score_pre_penalty = models.IntegerField(default=0)
     red_penalties = models.IntegerField(default=0)
     blue_penalties = models.IntegerField(default=0)
+    red_bonus = models.IntegerField(default=0)
+    blue_bonus = models.IntegerField(default=0)
 
     blue_center_active = models.BooleanField(default=False)
     red_center_active = models.BooleanField(default=False)
@@ -88,6 +90,22 @@ class Match(models.Model):
 
     def __unicode__(self):
         return 'Match ' + str(self.id)
+
+    def get_alliances(self):
+        alliances = {'red':{}, 'blue':{}}
+        alliances['red']['team_1'] = self.red_1
+        alliances['red']['team_1'].av = self.red_1_av_present
+        alliances['red']['team_1'].gv = self.red_1_gv_present
+        alliances['red']['team_2'] = self.red_2
+        alliances['red']['team_2'].av = self.red_2_av_present
+        alliances['red']['team_2'].gv = self.red_2_gv_present
+        alliances['blue']['team_1'] = self.blue_1
+        alliances['blue']['team_1'].av = self.blue_1_av_present
+        alliances['blue']['team_1'].gv = self.blue_1_gv_present
+        alliances['blue']['team_2'] = self.blue_2
+        alliances['blue']['team_2'].av = self.blue_2_av_present
+        alliances['blue']['team_2'].gv = self.blue_2_gv_present
+        return alliances
 
 class ScoringDevice(models.Model):
     scorer = models.OneToOneField(User)
@@ -108,7 +126,7 @@ class ScoringDevice(models.Model):
         stats['confirmed'] = confirmed
         diff = datetime.datetime.now() - self.last_contact
         stats['last_contact'] = elapsed_time(diff.seconds, separator=', ')
-        diff = get_microseconds()-self.scorer.matchevent_set.all().latest('microseconds').microseconds
+        diff = get_microseconds()-self.scorer.matchevent_set.all().latest('id').microseconds
         stats['last_event'] = elapsed_time(diff/1000000, separator=', ')
         return stats
 
@@ -123,3 +141,7 @@ class MatchEvent(models.Model):
     alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
     LEVEL_CHOICES=((1, 'Low GV'),(2, 'High GV'),(3, 'AV'))
     level = models.IntegerField(choices=LEVEL_CHOICES)
+
+    class Meta:
+        unique_together = ('match', 'id')
+        ordering = ['-id']

@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 
-from match.models import ScoringDevice, ScoringSystem
+from match.models import ScoringDevice, ScoringSystem, Match
 
 import datetime
 try: import simplejson as json
@@ -41,35 +41,18 @@ def scorer(request):
     return render_to_response('mobile_scorer/scorer.html', locals())
 
 @staff_member_required
-def scorekeeper(request):
-    try: ss = ScoringSystem.objects.all()[0]
-    except:
-        ss = ScoringSystem()
-        ss.save()
-    try: match = ss.current_match
-    except: match = None
-    sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
-    towers = {}
-    for sd in ScoringDevice.objects.filter(tower__isnull=False):
-        try:
-            if 'high_blue'==sd.tower.name: confirmed = match.scorer_high_blue_confirmed
-            elif 'high_red'==sd.tower.name: confirmed = match.scorer_high_red_confirmed
-            elif 'low_blue'==sd.tower.name: confirmed = match.scorer_low_blue_confirmed
-            elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
-        except: confirmed = False
-        towers[sd.tower.name] = sd.get_stats(confirmed)
-    return render_to_response('scorekeeper/scorekeeper.html', locals())
-
-@staff_member_required
-def timer(request):
+def timer(request, get_dict=False):
     match = ScoringSystem.objects.all()[0].current_match
+    match_state = 'pre_match'
     try:
         timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
         if timer.days < 0:
             timer = '0:00'
+            match_state = 'done'
         else:
             seconds = '00' + str(timer.seconds%60)
             timer = str(timer.seconds/60) + ':' + seconds[-2:]
+            match_state = 'match'
     except: timer = '2:30'
     try:
         red_timer = (match.red_center_active_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
@@ -91,12 +74,42 @@ def timer(request):
     except: red_score = 0
     try: blue_score = match.blue_score
     except: blue_score = 0
-    if request.is_ajax():
+    if request.is_ajax() or get_dict:
+        if match.is_practice:  practice = 'Practice'
+        else:  practice = ''
         response = {'timer': timer, 'blue_timer': blue_timer, 'red_timer': red_timer, \
-                'match': {'red_score': red_score, 'blue_score': blue_score}
+                'match': {'red_score': red_score, 'blue_score': blue_score, 'id':match.id }, \
+                'match_state':match_state, 'practice':practice, \
             }
+        if get_dict:
+            return response
         return HttpResponse(json.dumps(response), 'application/json')
     return render_to_response('timer.html', locals())
+
+@staff_member_required
+def scorekeeper(request):
+    matches = Match.objects.all()
+    try: ss = ScoringSystem.objects.all()[0]
+    except:
+        ss = ScoringSystem()
+        ss.save()
+    try:
+        match = ss.current_match
+        alliances = match.get_alliances()
+    except: match = None
+    sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
+    towers = {}
+    for sd in ScoringDevice.objects.filter(tower__isnull=False):
+        try:
+            if 'high_blue'==sd.tower.name: confirmed = match.scorer_high_blue_confirmed
+            elif 'high_red'==sd.tower.name: confirmed = match.scorer_high_red_confirmed
+            elif 'low_blue'==sd.tower.name: confirmed = match.scorer_low_blue_confirmed
+            elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
+        except: confirmed = False
+        towers[sd.tower.name] = sd.get_stats(confirmed)
+
+    timer_dict = timer(request, True)
+    return render_to_response('scorekeeper/scorekeeper.html', locals())
 
 def test_ajax(request):
     return HttpResponse('{"success":true}', 'application/json')

@@ -1,0 +1,57 @@
+<script type="text/javascript">
+    $("select.scorer_select").change(function(e){
+            alert('what') ;
+        var data = {} ;
+        $.ajax({
+            url: "{% url match_pick_scorer %}",
+            data: data,
+            cache: false,
+            type: "GET",
+            success: function(data) {
+                
+            }
+        });
+    });
+
+    $("select#match_id").change(function(e){
+        var data = {match_id: $(this).val()} ;
+        $.ajax({
+            url: "{% url match_select_match %}",
+            data: data,
+            cache: false,
+            type: "GET"
+        });
+    });
+document.body.style.fontSize = ((window.innerHeight/100)*25.25)+"%"
+    $( document ).ready( function() {
+        var setBodyScale = function() {
+            var scaleSource = $('body').width(),
+                scaleFactor = 0.10,
+                selectScaleFactor = 0.05,
+                maxScale = 600,
+                minScale = 30;
+
+            var fontSize = scaleSource * scaleFactor;
+
+            if (fontSize > maxScale) fontSize = maxScale;
+            if (fontSize < minScale) fontSize = minScale;
+
+            var selectFontSize = scaleSource * selectScaleFactor;
+
+            $('body').css('font-size', fontSize + '%');
+            $('select').css('font-size', selectFontSize + '%');
+            $('button').css('font-size', selectFontSize + '%');
+            $('input').css('font-size', selectFontSize + '%');
+        }
+
+        $(window).resize(function(){
+            setBodyScale();
+        });
+
+        //Fire it when the page first loads:
+        setBodyScale();
+    });
+
+</script>
+
+

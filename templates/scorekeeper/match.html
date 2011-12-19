@@ -1,0 +1,35 @@
+
+<div>
+    Setup Match:
+    <select id="match_id">
+        {% if not match.id %}
+        <option value="">Select Match</option>
+        {% endif %}
+        {% for m in matches %}
+        <option value="{{ m.id }}" {% if m.id == match.id %}selected="selected"{% endif %}>
+            {% if m.is_practice %}Practice {% endif %}Match {{ m.id }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="timer">
+    Timer: {{ timer_dict.timer }}
+</div>
+<div style="margin-left: 10%; margin-right: 10%; ">
+    <div class="float light-blue split" id="blue_timer">
+        On Center: {{ timer_dict.blue_timer }}
+    </div>
+    <div class="float light-red split" id="red_timer">
+        On Center:{{ timer_dict.red_timer }}
+    </div>
+</div>
+
+<span class="cl"></span>
+
+<div style="margin-top: 3%;">
+    <button {% if timer_dict.match_state != 'pre_match' %}disabled="disabled"{% endif %} 
+        id="start" style="margin-right:10%;">Start</button>
+    <button {% if timer_dict.match_state != 'match' %}disabled="disabled"{% endif %}
+        id="abort" style="margin-left:10%;">Abort</button>
+</div>

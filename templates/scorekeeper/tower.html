@@ -2,30 +2,30 @@
     {{ name }} Tower
 </div>
 
-<br /><br />
-
+<div>
 Scorer: 
-<select>
-    <option value="0">Select a Scorer</option>
-    {% if tc.scorer %}
-    <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
-    {% endif %}
-    {% for scorer in sd_avail %}
-    <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
-    {% endfor %}
-</select>
+    <select class="scorer_select" name="scorer_select_{{ machine_name }}">
+        <option value="0">Select a Scorer</option>
+        {% if tc.scorer %}
+        <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
+        {% endif %}
+        {% for scorer in sd_avail %}
+        <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
+        {% endfor %}
+    </select>
+</div>
 
-<br /><br />
+<div>
+    Submitted :
+    <span class="confirmed {% if tc.confirmed %}green{% else %}red{% endif %}">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+    </span>
+</div>
 
-Submitted :
-<span class="confirmed {% if tc.confirmed %}green{% else %}red{% endif %}">
-    &nbsp;&nbsp;&nbsp;&nbsp;
-</span>
+<div>
+    Last Contact: {{ tc.last_contact }}
+</div>
 
-<br /><br />
-
-Last Contact: {{ tc.last_contact }}
-
-<br /><br />
-
-Last Event Recieved: {{ tc.last_event }}
+<div>
+    Last Event Recieved: {{ tc.last_event }}
+</div>

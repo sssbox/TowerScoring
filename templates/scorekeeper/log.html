@@ -1,0 +1,29 @@
+<div>
+    Match Event Log
+</div>
+
+<div id="event_log">
+    {% for event in match.matchevent_set.all %}
+    <div class="match_event">
+        <span class="float match_event_scorer">{{ event.scorer.username }}</span>
+        <span class="float match_event_alliance light-{% if 'red' == event.alliance %}red{% else %}blue{% endif %}">
+            {{ event.alliance|title }}
+        </span>
+        <span class="float">&nbsp;scored&nbsp;</span>
+        <span class="float match_event_level">
+            {% if event.level == 1 %}Low GV{% else %}
+            {% if event.level == 2 %}High GV{% else %}
+            {% if event.level == 3 %}AV{% endif %}
+            {% endif %}{% endif %}
+        </span>
+        <span class="float"> on&nbsp;</span>
+        <span class="float match_event_tower_1">
+            {% if 'high_' in event.tower.name %}High{% else %}Low{% endif %}
+        </span>
+        <span class="float match_event_tower_2 light-{% if '_red' in event.tower.name %}red{% else %}blue{% endif %}">
+            {% if '_red' in event.tower.name %}Red{% else %}Blue{% endif %}
+        </span>
+    </div>
+    <span class="cl"></span>
+    {% endfor %}
+</div> 
