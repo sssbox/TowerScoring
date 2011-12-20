@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from models import *
 from utils.time import get_microseconds
+from scoring.views import scorekeeper
 
 try: import simplejson as json
 except: import json
@@ -167,4 +168,5 @@ def select_match(request):
     ss.save()
 #TODO Return normal status response to update all of the other modules
 #TODO If match isn't over assign current scorers to the match history.
-    return HttpResponse(json.dumps({'success': True}), 'application/json')
+    return scorekeeper(request)
+#    return HttpResponse(json.dumps({'success': True}), 'application/json')

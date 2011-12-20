@@ -3,29 +3,35 @@
 </div>
 
 <div>
-Scorer: 
-    <select class="scorer_select" name="scorer_select_{{ machine_name }}">
-        <option value="0">Select a Scorer</option>
-        {% if tc.scorer %}
-        <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
+    Scorer: 
+    <span id="scorer_span_{{ machine_name }}">
+        {% if timer_dict.match_state == 'done' %}
+        {{ tc.scorer }}
+        {% else %}
+        <select class="scorer_select" id="scorer_select_{{ machine_name }}">
+            <option value="0">Select a Scorer</option>
+            {% if tc.scorer %}
+            <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
+            {% endif %}
+            {% for scorer in sd_avail %}
+            <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
+            {% endfor %}
+        </select>
         {% endif %}
-        {% for scorer in sd_avail %}
-        <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
-        {% endfor %}
-    </select>
+    </span>
 </div>
 
 <div>
     Submitted :
-    <span class="confirmed {% if tc.confirmed %}green{% else %}red{% endif %}">
+    <span class="confirmed confirmed_{{ machine_name }} {% if tc.confirmed %}green{% else %}red{% endif %}">
         &nbsp;&nbsp;&nbsp;&nbsp;
     </span>
 </div>
 
 <div>
-    Last Contact: {{ tc.last_contact }}
+    Last Contact: <span class="last_contact_{{ machine_name }}">{{ tc.last_contact }}</span>
 </div>
 
 <div>
-    Last Event Recieved: {{ tc.last_event }}
+    Last Event Recieved: <span class="last_event_{{ machine_name }}">{{ tc.last_event }}</span>
 </div>

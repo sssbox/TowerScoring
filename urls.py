@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'views.index', name='index'),
     url(r'^timer/$', 'views.timer', name='timer'),
+    url(r'^scorekeeper/$', 'views.scorekeeper', name='scorekeeper'),
     url(r'^test_ajax$', 'views.test_ajax', name='test_ajax'),
     # url(r'^scoring/', include('foo.urls')),
     url(r'^match/', include('match.urls')),

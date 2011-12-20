@@ -2,8 +2,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
+from django.forms.models import model_to_dict
 
 from match.models import ScoringDevice, ScoringSystem, Match
+from utils.time import elapsed_time, get_microseconds
 
 import datetime
 try: import simplejson as json
@@ -88,7 +90,6 @@ def timer(request, get_dict=False):
 
 @staff_member_required
 def scorekeeper(request):
-    matches = Match.objects.all()
     try: ss = ScoringSystem.objects.all()[0]
     except:
         ss = ScoringSystem()
@@ -97,18 +98,84 @@ def scorekeeper(request):
         match = ss.current_match
         alliances = match.get_alliances()
     except: match = None
+    timer_dict = timer(request, True)
     sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
     towers = {}
-    for sd in ScoringDevice.objects.filter(tower__isnull=False):
-        try:
-            if 'high_blue'==sd.tower.name: confirmed = match.scorer_high_blue_confirmed
-            elif 'high_red'==sd.tower.name: confirmed = match.scorer_high_red_confirmed
-            elif 'low_blue'==sd.tower.name: confirmed = match.scorer_low_blue_confirmed
-            elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
-        except: confirmed = False
-        towers[sd.tower.name] = sd.get_stats(confirmed)
+    if timer_dict['match_state'] == 'done':
+        try:towers['low_red'] = ScoringDevice.objects.get(scorer=match.scorer_low_red).get_stats(match.scorer_low_red_confirmed)
+        except:
+            try: diff = get_microseconds() - match.scorer_low_red.match_event_set.all().latest('id').microseconds
+            except: diff = 0
+            try:
+                towers['low_red'] = {'scorer':match.scorer_low_red.username, \
+                    'confirmed':match.scorer_low_red_confirmed, 'last_contact': 'N/A', \
+                    'last_event': elapsed_time(diff/100000, separator=', ')}
+            except: pass
+        try: towers['high_red'] = ScoringDevice.objects.get(scorer=match.scorer_high_red).get_stats(match.scorer_high_red_confirmed)
+        except:
+            try: diff = get_microseconds() - match.scorer_high_red.scorer.match_event_set.all().latest('id').microseconds
+            except: diff = 0
+            try:
+                towers['high_red'] = {'scorer':match.scorer_high_red.username, \
+                    'confirmed':match.scorer_high_red_confirmed, 'last_contact': 'N/A', \
+                    'last_event': elapsed_time(diff/100000, separator=', ')}
+            except: pass
+        try: towers['low_blue'] = ScoringDevice.objects.get(scorer=match.scorer_low_blue).get_stats(match.scorer_low_blue_confirmed)
+        except:
+            try: diff = get_microseconds() - match.scorer_low_blue.match_event_set.all().latest('id').microseconds
+            except: diff = 0
+            try:
+                towers['low_blue'] = {'scorer':match.scorer_low_blue.username, \
+                    'confirmed':match.scorer_low_blue_confirmed, 'last_contact': 'N/A', \
+                    'last_event': elapsed_time(diff/100000, separator=', ')}
+            except: pass
+        try: towers['high_blue'] = ScoringDevice.objects.get(scorer=match.scorer_high_blue).get_stats(match.scorer_high_blue_confirmed)
+        except:
+            try: diff = get_microseconds() - match.scorer_high_blue.match_event_set.all().latest('id').microseconds
+            except: diff = 0
+            try:
+                towers['high_blue'] = {'scorer':match.scorer_high_blue.username, \
+                    'confirmed':match.scorer_high_blue_confirmed, 'last_contact': 'N/A', \
+                    'last_event': elapsed_time(diff/100000, separator=', ')}
+            except: pass
+    else:
+        for sd in ScoringDevice.objects.filter(tower__isnull=False):
+            try:
+                if 'high_blue'==sd.tower.name: confirmed = match.scorer_high_blue_confirmed
+                elif 'high_red'==sd.tower.name: confirmed = match.scorer_high_red_confirmed
+                elif 'low_blue'==sd.tower.name: confirmed = match.scorer_low_blue_confirmed
+                elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
+            except: confirmed = False
+            towers[sd.tower.name] = sd.get_stats(confirmed)
+        del(sd)
+        del(confirmed)
 
-    timer_dict = timer(request, True)
+    matches = Match.objects.all()
+    del(ss)
+    if request.is_ajax():
+        del(sd_avail)
+        del(matches)
+        del(request)
+        locs = locals()
+        locs['match'] = model_to_dict(match)
+        locs['match']['match_events'] = []
+        for event in match.matchevent_set.all().order_by('id'):
+            event_dict = model_to_dict(event)
+            event_dict['scorer'] = model_to_dict(event.scorer, fields=('id', 'username'))
+            event_dict['tower'] = model_to_dict(event.tower)
+            locs['match']['match_events'].append(event_dict)
+        f=('name', 'number')
+        locs['alliances']['blue']['team_1']['t'] = model_to_dict(alliances['blue']['team_1']['t'],fields=f)
+        locs['alliances']['blue']['team_2']['t'] = model_to_dict(alliances['blue']['team_2']['t'],fields=f)
+        locs['alliances']['red']['team_1']['t'] = model_to_dict(alliances['red']['team_1']['t'], fields=f)
+        locs['alliances']['red']['team_2']['t'] = model_to_dict(alliances['red']['team_2']['t'], fields=f)
+        del(locs['match']['actual_start'])
+        del(locs['match']['time'])
+        del(locs['match']['red_center_active_start'])
+        del(locs['match']['blue_center_active_start'])
+        return HttpResponse(json.dumps(locs), 'application/json')
+
+    del(request)
     return render_to_response('scorekeeper/scorekeeper.html', locals())
 
 def test_ajax(request):

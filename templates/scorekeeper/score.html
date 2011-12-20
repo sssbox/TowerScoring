@@ -5,40 +5,52 @@
 <div>
     <table style="margin-left:auto; margin-right:auto; text-align:left;">
         <tr>
-            <td></td><th>Blue</th><th>Red</th>
+            <td></td><th></th><th>Blue</th><th></th><th>Red</th>
         </tr>
         <tr>
-            <th>&nbsp;Base Score</th>
-            <td><input size="5" type="text" id="blue_score_pre_penalty" 
-                value="{{ match.blue_score_pre_penalty }}" 
+            <th>Base Score</th>
+            <td class="blue_score_pre_penalty">{{ match.blue_score_pre_penalty }}</td>
+            <td><input size="5" type="text" class="blue_score_pre_penalty score_div" 
+                id="blue_score_pre_penalty" value="{{ match.blue_score_pre_penalty }}" 
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
-            <td><input size="5" type="text" id="red_score_pre_penalty"
-                value="{{ match.red_score_pre_penalty }}"
+            <td class="red_score_pre_penalty">{{ match.red_score_pre_penalty }}</td>
+            <td><input size="5" type="text" class="red_score_pre_penalty score_div"
+                id="red_score_pre_penalty" value="{{ match.red_score_pre_penalty }}"
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
         </tr>
         <tr>
             <th>- &nbsp;Penalties</th>
-            <td><input size="5" type="text" id="blue_penalties" value="{{ match.blue_penalties }}"
+            <td class="blue_penalties">{{ match.blue_penalties }}</td>
+            <td><input size="5" type="text" id="blue_penalties" class="blue_penalties score_div"
+                value="{{ match.blue_penalties }}"
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
-            <td><input size="5" type="text" id="red_penalties" value="{{ match.red_penalties }}"
+            <td class="red_penalties">{{ match.red_penalties }}</td>
+            <td><input size="5" type="text" id="red_penalties" class="red_penalties score_div"
+                value="{{ match.red_penalties }}"
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
         </tr>
         <tr>
             <th>+ Bonuses</th>
-            <td><input size="5" type="text" id="blue_bonus" value="{{ match.blue_bonus }}"
+            <td class="blue_bonus">{{ match.blue_bonus }}</td>
+            <td><input size="5" type="text" id="blue_bonus" class="blue_bonus score_div"
+                value="{{ match.blue_bonus }}"
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
-            <td><input size="5" type="text" id="red_bonus" value="{{ match.red_bonus }}"
+            <td class="red_bonus">{{ match.red_bonus }}</td>
+            <td><input size="5" type="text" id="red_bonus" class="red_bonus score_div" 
+                value="{{ match.red_bonus }}"
                 {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %} /></td>
         </tr>
         <tr>
             <th>= Totals</th>
             <td id="blue_score">{{ match.blue_score }}</td>
+            <td></td>
             <td id="red_score">{{ match.red_score }}</td>
+            <td></td>
         </tr>
     </table>
 </div>
 
 <div>
     <button {% if timer_dict.match_state != 'done' %}disabled="disabled"{% endif %}
-        id="save_scores">Save Scores</button>
+        id="save_scores" class="score_div">Save Scores</button>
 </div>

@@ -1,7 +1,7 @@
 
 <div>
     Setup Match:
-    <select id="match_id">
+    <select id="match_id" {% if timer_dict.match_state == 'match' %}disabled="disabled"{% endif %}>
         {% if not match.id %}
         <option value="">Select Match</option>
         {% endif %}

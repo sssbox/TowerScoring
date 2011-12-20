@@ -3,29 +3,29 @@
 </div>
 
 <div>
-    Team <span id="{{ color }}_team_id">{{ alliance.team_1.number }}</span>
-        <span id="{{ color }}_team_name">{{ alliance.team_1.name }}</span>
+    Team <span id="{{ color|lower }}_team_1_id">{{ alliance.team_1.t.number }}</span>
+        <span id="{{ color|lower }}_team_1_name">{{ alliance.team_1.t.name }}</span>
     <div class="has_robot">
-        <label for="{{ color }}_1_has_av">Has AV</label>
-        <input type="checkbox" id="{{ color }}_1_has_av"
+        <label for="{{ color|lower }}_team_1_has_av">Has AV</label>
+        <input type="checkbox" id="{{ color|lower }}_team_1_has_av"
             {% if alliance.team_1.av %}checked="checked"{% endif %} />
         <br />
-        <label for="{{ color }}_1_has_gv">Has GV</label>
-        <input type="checkbox" id="{{ color }}_1_has_gv"
+        <label for="{{ color|lower }}_team_1_has_gv">Has GV</label>
+        <input type="checkbox" id="{{ color|lower }}_team_1_has_gv"
             {% if alliance.team_1.gv %}checked="checked"{% endif %} />
     </div>
 </div>
 
 <div>
-    Team <span id="{{ color }}_team_id">{{ alliance.team_2.number }}</span>
-        <span id="{{ color }}_team_name">{{ alliance.team_2.name }}</span>
+    Team <span id="{{ color|lower }}_team_2_id">{{ alliance.team_2.t.number }}</span>
+        <span id="{{ color|lower }}_team_2_name">{{ alliance.team_2.t.name }}</span>
     <div class="has_robot">
-        <label for="{{ color }}_2_has_av">Has AV</label>
-        <input type="checkbox" id="{{ color }}_2_has_av"
+        <label for="{{ color|lower }}_team_2_has_av">Has AV</label>
+        <input type="checkbox" id="{{ color|lower }}_team_2_has_av"
             {% if alliance.team_2.av %}checked="checked"{% endif %} />
         <br />
-        <label for="{{ color }}_2_has_gv">Has GV</label>
-        <input type="checkbox" id="{{ color }}_2_has_gv"
+        <label for="{{ color|lower }}_team_2_has_gv">Has GV</label>
+        <input type="checkbox" id="{{ color|lower }}_team_2_has_gv"
             {% if alliance.team_2.gv %}checked="checked"{% endif %} />
     </div>
 </div>

@@ -1,4 +1,148 @@
 <script type="text/javascript">
+    function load_data(data, action){
+        var towers = {'high_red':true,'high_blue':true,'low_red':true,'low_blue':true} ;
+        for(tower in data.towers){
+            delete towers[tower] ;
+            if(data.timer_dict.match_state == 'done')
+                $("#scorer_span_"+tower).html(data.towers[tower].scorer) ;
+            else
+            {
+//TODO           $("#scorer_span_"+tower).html(
+            }
+            if(data.towers[tower].confirmed){
+                $("span.confirmed_"+tower).addClass('green');
+                $("span.confirmed_"+tower).removeClass('red');
+            }else{
+                $("span.confirmed_"+tower).addClass('red');
+                $("span.confirmed_"+tower).removeClass('green');
+            }
+            $('span.last_contact_'+tower).html(data.towers[tower].last_contact) ;
+            $('span.last_event_'+tower).html(data.towers[tower].last_event) ;
+        }
+        for(tower in towers){
+            $("#scorer_span_"+tower).html('') ;
+            $("span.confirmed_"+tower).addClass('red');
+            $("span.confirmed_"+tower).removeClass('green');
+            $('span.last_contact_'+tower).html('') ;
+            $('span.last_event_'+tower).html('') ;
+        }
+
+        $("div.timer").html('Timer: ' + data.timer_dict.timer) ;
+        $("#blue_timer").html('On Center: ' + data.timer_dict.blue_timer) ;
+        $("#red_timer").html('On Center: ' + data.timer_dict.red_timer) ;
+        if(data.timer_dict.match_state == 'match')
+            $("#match_id").attr('disabled', 'disabled') ;
+        else
+            $("#match_id").attr('disabled', '') ;
+        if(data.timer_dict.match_state != 'pre_match')
+            $("#start").attr('disabled', 'disabled') ;
+        else
+            $("#start").attr('disabled', '') ;
+        if(data.timer_dict.match_state != 'match')
+            $("#abort").attr('disabled', 'disabled') ;
+        else
+            $("#abort").attr('disabled', '') ;
+        $("#blue_score").html(data.match.blue_score) ;
+        $("#red_score").html(data.match.red_score) ;
+        $("td.blue_score_pre_penalty").html(data.match.blue_score_pre_penalty) ;
+        $("td.blue_penalties").html(data.match.blue_penalties) ;
+        $("td.blue_bonus").html(data.match.blue_bonus) ;
+        $("td.red_score_pre_penalty").html(data.match.red_score_pre_penalty) ;
+        $("td.red_penalties").html(data.match.red_penalties) ;
+        $("td.red_bonus").html(data.match.red_bonus) ;
+        if(data.timer_dict.match_state != 'done')
+            $(".score_div").attr('disabled', 'disabled') ;
+        else
+            $(".score_div").attr('disabled', '') ;
+        if(data.timer_dict.match_state != 'done' || action == 'match_change')
+        {
+            $("input.blue_score_pre_penalty").val(data.match.blue_score_pre_penalty) ;
+            $("input.blue_penalties").val(data.match.blue_penalties) ;
+            $("input.blue_bonus").val(data.match.blue_bonus) ;
+            $("input.red_score_pre_penalty").val(data.match.red_score_pre_penalty) ;
+            $("input.red_penalties").val(data.match.red_penalties) ;
+            $("input.red_bonus").val(data.match.red_bonus) ;
+        }
+        if(action == 'match_change')
+        {
+            for (color in data.alliances)
+            {
+                for (team in data.alliances[color])
+                {
+                    $("#"+color+'_'+team+'_id').html(data.alliances[color][team]['t']['number']) ;
+                    $("#"+color+'_'+team+'_name').html(data.alliances[color][team]['t']['name']) ;
+                    if(data.alliances[color][team]['av'])
+                        $("#"+color+'_'+team+'_has_av').attr('checked', 'checked')
+                    else
+                        $("#"+color+'_'+team+'_has_av').attr('checked', '')
+                    if(data.alliances[color][team]['gv'])
+                        $("#"+color+'_'+team+'_has_gv').attr('checked', 'checked')
+                    else
+                        $("#"+color+'_'+team+'_has_gv').attr('checked', '')
+                }
+            }
+        }
+        var event_log = $("#event_log") ;
+        event_log.empty() ;
+        for (match_event in data.match.match_events)
+        {
+            match_event = data.match.match_events[match_event] ;
+            var c = $("#match_event_template").clone() ;
+            c.attr('id', '') ;
+            c.find('.match_event_scorer').html(match_event.scorer.username) ;
+            var al = c.find('.match_event_alliance') ;
+            if(match_event.alliance == 'red') {
+                al.html('Red') ;
+                al.addClass('light-red') ;
+            } else {
+                al.html('Blue') ;
+                al.addClass('light-blue') ;
+            }
+            if(match_event.level == 1)
+                c.find('.match_event_level').html("Low GV") ;
+            else if(match_event.level == 2)
+                c.find('.match_event_level').html("High GV") ;
+            else if(match_event.level == 3)
+                c.find('.match_event_level').html("AV") ;
+            var tower_name = String(match_event.tower.name) ;
+            if(tower_name.indexOf('high_') > -1)
+                c.find('.match_event_tower_1').html("High") ;
+            else if(tower_name.indexOf('low_') > -1)
+                c.find('.match_event_tower_1').html("Low") ;
+            else if(tower_name.indexOf('center') > -1)
+                c.find('.match_event_tower_1').html("Center") ;
+            if(tower_name.indexOf('center') > -1)
+            {
+                c.find('.match_event_tower_2').html("&nbsp;") ;
+            } else if(tower_name.indexOf('_red') > -1) {
+                c.find('.match_event_tower_2').html("Red") ;
+                c.find('.match_event_tower_2').addClass('light-red') ;
+            } else if(tower_name.indexOf('_blue') > -1) {
+                c.find('.match_event_tower_2').html("Blue") ;
+                c.find('.match_event_tower_2').addClass('light-blue') ;
+            }
+            event_log.prepend(c) ;
+            c.show() ;
+        }
+    }
+    function load_data_on_match_change(data)
+    {
+        load_data(data, 'match_change');
+    }
+    function load_data_none(data)
+    {
+        load_data(data, '') ;
+    }
+    function update_display()
+    {
+        $.ajax({
+            url: "{% url scorekeeper %}",
+            method: "GET",
+            cache: false,
+            success: load_data_none
+        });
+    }
+    setInterval(update_display, 1000) ;
     $("select.scorer_select").change(function(e){
             alert('what') ;
         var data = {} ;
@@ -19,10 +163,11 @@
             url: "{% url match_select_match %}",
             data: data,
             cache: false,
-            type: "GET"
+            type: "GET",
+            success: load_data_on_match_change
         });
     });
-document.body.style.fontSize = ((window.innerHeight/100)*25.25)+"%"
+
     $( document ).ready( function() {
         var setBodyScale = function() {
             var scaleSource = $('body').width(),
@@ -53,5 +198,3 @@ document.body.style.fontSize = ((window.innerHeight/100)*25.25)+"%"
     });
 
 </script>
-
-

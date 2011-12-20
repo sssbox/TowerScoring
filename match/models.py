@@ -92,19 +92,19 @@ class Match(models.Model):
         return 'Match ' + str(self.id)
 
     def get_alliances(self):
-        alliances = {'red':{}, 'blue':{}}
-        alliances['red']['team_1'] = self.red_1
-        alliances['red']['team_1'].av = self.red_1_av_present
-        alliances['red']['team_1'].gv = self.red_1_gv_present
-        alliances['red']['team_2'] = self.red_2
-        alliances['red']['team_2'].av = self.red_2_av_present
-        alliances['red']['team_2'].gv = self.red_2_gv_present
-        alliances['blue']['team_1'] = self.blue_1
-        alliances['blue']['team_1'].av = self.blue_1_av_present
-        alliances['blue']['team_1'].gv = self.blue_1_gv_present
-        alliances['blue']['team_2'] = self.blue_2
-        alliances['blue']['team_2'].av = self.blue_2_av_present
-        alliances['blue']['team_2'].gv = self.blue_2_gv_present
+        alliances = {'red':{'team_1':{}, 'team_2':{}}, 'blue':{'team_1':{}, 'team_2':{}}}
+        alliances['red']['team_1']['t'] = self.red_1
+        alliances['red']['team_1']['av'] = self.red_1_av_present
+        alliances['red']['team_1']['gv'] = self.red_1_gv_present
+        alliances['red']['team_2']['t'] = self.red_2
+        alliances['red']['team_2']['av'] = self.red_2_av_present
+        alliances['red']['team_2']['gv'] = self.red_2_gv_present
+        alliances['blue']['team_1']['t'] = self.blue_1
+        alliances['blue']['team_1']['av'] = self.blue_1_av_present
+        alliances['blue']['team_1']['gv'] = self.blue_1_gv_present
+        alliances['blue']['team_2']['t'] = self.blue_2
+        alliances['blue']['team_2']['av'] = self.blue_2_av_present
+        alliances['blue']['team_2']['gv'] = self.blue_2_gv_present
         return alliances
 
 class ScoringDevice(models.Model):
