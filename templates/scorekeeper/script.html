@@ -1,26 +1,29 @@
 <script type="text/javascript">
     function load_data(data, action){
-        if(action == 'match_change' || action == 'select_scorer')
-        {
-            var towers = {'high_red':true,'high_blue':true,'low_red':true,'low_blue':true} ;
-            for(tower in data.towers){
-                delete towers[tower] ;
+        var towers = {'high_red':true,'high_blue':true,'low_red':true,'low_blue':true} ;
+        for(tower in data.towers){
+            delete towers[tower] ;
+            if(action == 'match_change' || action == 'select_scorer')
+            {
                 if(data.timer_dict.match_state == 'done')
                     $("#scorer_span_"+tower).html(data.towers[tower].scorer) ;
                 else
                 {
     //TODO           $("#scorer_span_"+tower).html(
                 }
-                if(data.towers[tower].confirmed){
-                    $("span.confirmed_"+tower).addClass('green');
-                    $("span.confirmed_"+tower).removeClass('red');
-                }else{
-                    $("span.confirmed_"+tower).addClass('red');
-                    $("span.confirmed_"+tower).removeClass('green');
-                }
-                $('span.last_contact_'+tower).html(data.towers[tower].last_contact) ;
-                $('span.last_event_'+tower).html(data.towers[tower].last_event) ;
             }
+            if(data.towers[tower].confirmed){
+                $("span.confirmed_"+tower).addClass('green');
+                $("span.confirmed_"+tower).removeClass('red');
+            }else{
+                $("span.confirmed_"+tower).addClass('red');
+                $("span.confirmed_"+tower).removeClass('green');
+            }
+            $('span.last_contact_'+tower).html(data.towers[tower].last_contact) ;
+            $('span.last_event_'+tower).html(data.towers[tower].last_event) ;
+        }
+        if(action == 'match_change' || action == 'select_scorer')
+        {
             for(tower in towers){
                 $("#scorer_span_"+tower).html('') ;
                 $("span.confirmed_"+tower).addClass('red');
