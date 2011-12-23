@@ -12,8 +12,8 @@
             if(action == 'match_change' || action == 'select_scorer')
             {
                 if(data.timer_dict.match_state == 'pre_match') {
-                    $("#scorer_span_" + tower + "_static").attr('disabled', 'disabled') ;
-                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', '') ;
+                    $("#scorer_span_" + tower + "_static").hide() ;
+                    $("#scorer_span_" + tower + "_dynamic").show() ;
                     var select = $("#scorer_select_" + tower) ;
                     select.children(":not(.default)").remove() ;
                     var def = select.find(".default") ;
@@ -21,8 +21,8 @@
                     def.after('<option value="'+data.towers[tower].scorer_id+'" selected="selected">'+data.towers[tower].scorer+'</option>');
                 } else {
                     $("#scorer_span_"+tower+"_static").html(data.towers[tower].scorer) ;
-                    $("#scorer_span_" + tower + "_static").attr('disabled', '') ;
-                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', 'disabled') ;
+                    $("#scorer_span_" + tower + "_static").show() ;
+                    $("#scorer_span_" + tower + "_dynamic").hide() ;
                 }
             }
             if(data.towers[tower].confirmed){
@@ -39,15 +39,15 @@
         {
             for(tower in towers){
                 if(data.timer_dict.match_state == 'pre_match') {
-                    $("#scorer_span_" + tower + "_static").attr('disabled', 'disabled') ;
-                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', '') ;
+                    $("#scorer_span_" + tower + "_static").hide();
+                    $("#scorer_span_" + tower + "_dynamic").show() ;
                     var select = $("#scorer_select_" + tower) ;
                     select.children(":not(.default)").remove() ;
                     var def = select.find(".default") ;
                     def.after(sd_avail) ;
                 } else {
-                    $("#scorer_span_" + tower + "_static").attr('disabled', '') ;
-                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', 'disabled') ;
+                    $("#scorer_span_" + tower + "_static").show() ;
+                    $("#scorer_span_" + tower + "_dynamic").hide() ;
                 }
                 $("#scorer_span_"+tower+"_static").html('') ;
                 $("span.confirmed_"+tower).addClass('red');
@@ -199,7 +199,8 @@
             $.ajax({
                 url: "{% url match_reset_match %}",
                 cache: false,
-                type: "GET"
+                type: "GET",
+                success: load_data_on_select_scorer
             });
         }
     });

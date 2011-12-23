@@ -110,7 +110,7 @@ def scorekeeper(request):
     timer_dict = timer(request, True)
     sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
     towers = {}
-    if timer_dict['match_state'] == 'done':
+    if timer_dict['match_state'] != 'pre_match':
         try:towers['low_red'] = ScoringDevice.objects.get(scorer=match.scorer_low_red).get_stats(match.scorer_low_red_confirmed)
         except:
             try: diff = get_microseconds() - match.scorer_low_red.match_event_set.all().latest('id').microseconds

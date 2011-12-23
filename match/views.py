@@ -214,15 +214,16 @@ def reset_match(request):
     match = ScoringSystem.objects.all()[0].current_match
     match.reset()
     ScoringDevice.objects.all().update(on_center=False)
-    return HttpResponse(json.dumps({'success': True}), 'application/json')
+    return scorekeeper(request)
 
 @staff_member_required
 def start_match(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():
         raise Http404
-    reset_match(request)
     match = ScoringSystem.objects.all()[0].current_match
+    match.reset()
+    ScoringDevice.objects.all().update(on_center=False)
     match.actual_start = datetime.datetime.now()
     match.save()
     return scorekeeper(request)
