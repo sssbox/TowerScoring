@@ -88,6 +88,27 @@ class Match(models.Model):
     scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue", null=True, blank=True)
     scorer_high_blue_confirmed = models.BooleanField(default=False)
 
+    def reset(self):
+        self.actual_start = None
+        self.matchevent_set.all().delete()
+        self.red_score = 0
+        self.blue_score = 0
+        self.red_score_pre_penalty = 0
+        self.blue_score_pre_penalty = 0
+        self.red_penalties = 0
+        self.blue_penalties = 0
+        self.red_bonus = 0
+        self.blue_bonus = 0
+        self.red_center_active = False
+        self.blue_center_active = False
+        self.red_center_active_start = None
+        self.blue_center_active_start = None
+        self.scorer_low_red_confirmed = False
+        self.scorer_high_red_confirmed = False
+        self.scorer_low_blue_confirmed = False
+        self.scorer_high_blue_confirmed = False
+        self.save()
+
     def __unicode__(self):
         return 'Match ' + str(self.id)
 
@@ -126,8 +147,10 @@ class ScoringDevice(models.Model):
         stats['confirmed'] = confirmed
         diff = datetime.datetime.now() - self.last_contact
         stats['last_contact'] = elapsed_time(diff.seconds, separator=', ')
-        diff = get_microseconds()-self.scorer.matchevent_set.all().latest('id').microseconds
-        stats['last_event'] = elapsed_time(diff/1000000, separator=', ')
+        try:
+            diff = get_microseconds()-self.scorer.matchevent_set.all().latest('id').microseconds
+            stats['last_event'] = elapsed_time(diff/1000000, separator=', ')
+        except: stats['last_event'] = 'N/A'
         return stats
 
 class ScoringSystem(models.Model):

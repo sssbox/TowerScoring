@@ -1,15 +1,28 @@
 <script type="text/javascript">
     function load_data(data, action){
         var towers = {'high_red':true,'high_blue':true,'low_red':true,'low_blue':true} ;
+        var sd_avail = '' ;
+        for (sd in data.sd_avail_list)
+        {
+            sd = data.sd_avail_list[sd] ;
+            sd_avail += '<option value="'+sd.id+'">'+sd.username+'</option>' ;
+        }
         for(tower in data.towers){
             delete towers[tower] ;
             if(action == 'match_change' || action == 'select_scorer')
             {
-                if(data.timer_dict.match_state == 'done')
-                    $("#scorer_span_"+tower).html(data.towers[tower].scorer) ;
-                else
-                {
-    //TODO           $("#scorer_span_"+tower).html(
+                if(data.timer_dict.match_state == 'pre_match') {
+                    $("#scorer_span_" + tower + "_static").attr('disabled', 'disabled') ;
+                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', '') ;
+                    var select = $("#scorer_select_" + tower) ;
+                    select.children(":not(.default)").remove() ;
+                    var def = select.find(".default") ;
+                    def.after(sd_avail) ;
+                    def.after('<option value="'+data.towers[tower].scorer_id+'" selected="selected">'+data.towers[tower].scorer+'</option>');
+                } else {
+                    $("#scorer_span_"+tower+"_static").html(data.towers[tower].scorer) ;
+                    $("#scorer_span_" + tower + "_static").attr('disabled', '') ;
+                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', 'disabled') ;
                 }
             }
             if(data.towers[tower].confirmed){
@@ -25,7 +38,18 @@
         if(action == 'match_change' || action == 'select_scorer')
         {
             for(tower in towers){
-                $("#scorer_span_"+tower).html('') ;
+                if(data.timer_dict.match_state == 'pre_match') {
+                    $("#scorer_span_" + tower + "_static").attr('disabled', 'disabled') ;
+                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', '') ;
+                    var select = $("#scorer_select_" + tower) ;
+                    select.children(":not(.default)").remove() ;
+                    var def = select.find(".default") ;
+                    def.after(sd_avail) ;
+                } else {
+                    $("#scorer_span_" + tower + "_static").attr('disabled', '') ;
+                    $("#scorer_span_" + tower + "_dynamic").attr('disabled', 'disabled') ;
+                }
+                $("#scorer_span_"+tower+"_static").html('') ;
                 $("span.confirmed_"+tower).addClass('red');
                 $("span.confirmed_"+tower).removeClass('green');
                 $('span.last_contact_'+tower).html('') ;
@@ -36,18 +60,26 @@
         $("div.timer").html('Timer: ' + data.timer_dict.timer) ;
         $("#blue_timer").html('On Center: ' + data.timer_dict.blue_timer) ;
         $("#red_timer").html('On Center: ' + data.timer_dict.red_timer) ;
-        if(data.timer_dict.match_state == 'match')
+        if(data.timer_dict.match_state == 'match') {
             $("#match_id").attr('disabled', 'disabled') ;
-        else
+            $("#abort").attr('disabled', '') ;
+        } else {
+            $("#abort").attr('disabled', 'disabled') ;
             $("#match_id").attr('disabled', '') ;
+        }
         if(data.timer_dict.match_state != 'pre_match')
             $("#start").attr('disabled', 'disabled') ;
         else
             $("#start").attr('disabled', '') ;
-        if(data.timer_dict.match_state != 'match')
-            $("#abort").attr('disabled', 'disabled') ;
-        else
-            $("#abort").attr('disabled', '') ;
+        if(data.timer_dict.match_state == 'done') {
+            $("#abort").hide() ;
+            $("#reset").show() ;
+            $(".score_div").attr('disabled', '') ;
+        } else {
+            $(".score_div").attr('disabled', 'disabled') ;
+            $("#abort").show() ;
+            $("#reset").hide() ;
+        }
         $("#blue_score").html(data.match.blue_score) ;
         $("#red_score").html(data.match.red_score) ;
         $("td.blue_score_pre_penalty").html(data.match.blue_score_pre_penalty) ;
@@ -56,10 +88,6 @@
         $("td.red_score_pre_penalty").html(data.match.red_score_pre_penalty) ;
         $("td.red_penalties").html(data.match.red_penalties) ;
         $("td.red_bonus").html(data.match.red_bonus) ;
-        if(data.timer_dict.match_state != 'done')
-            $(".score_div").attr('disabled', 'disabled') ;
-        else
-            $(".score_div").attr('disabled', '') ;
         if(data.timer_dict.match_state != 'done' || action == 'match_change')
         {
             $("input.blue_score_pre_penalty").val(data.match.blue_score_pre_penalty) ;
@@ -153,9 +181,31 @@
         });
     }
     setInterval(update_display, 1000) ;
+
+    $("#start").click(function(e){
+        e.preventDefault() ;
+        $.ajax({
+            url: "{% url match_start_match %}",
+            cache: false,
+            type: "GET",
+            success: load_data_on_select_scorer
+        });
+    });
+
+    $("#reset, #abort").click(function(e){
+        e.preventDefault() ;
+        if(confirm("Are you sure? This will wipe all data from this match."))
+        {
+            $.ajax({
+                url: "{% url match_reset_match %}",
+                cache: false,
+                type: "GET"
+            });
+        }
+    });
+
     $("select.scorer_select").change(function(e){
-            alert('what') ;
-        var data = {} ;
+        var data = {tower_name: $(this).attr('name'), scorer_id: $(this).val()} ;
         $.ajax({
             url: "{% url match_pick_scorer %}",
             data: data,

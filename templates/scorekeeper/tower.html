@@ -5,19 +5,21 @@
 <div>
     Scorer: 
     <span id="scorer_span_{{ machine_name }}">
-        {% if timer_dict.match_state == 'done' %}
-        {{ tc.scorer }}
-        {% else %}
-        <select class="scorer_select" id="scorer_select_{{ machine_name }}">
-            <option value="0">Select a Scorer</option>
-            {% if tc.scorer %}
-            <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
-            {% endif %}
-            {% for scorer in sd_avail %}
-            <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
-            {% endfor %}
-        </select>
-        {% endif %}
+        <span id="scorer_span_{{ machine_name }}_static"
+            {% if timer_dict.match_state == 'pre_match' %}style="display:none;"{% endif %}>
+            {{ tc.scorer }}</span>
+        <span id="scorer_span_{{ machine_name }}_dynamic"
+            {% if timer_dict.match_state != 'pre_match' %}style="display:none;"{% endif %}>
+            <select class="scorer_select" id="scorer_select_{{ machine_name }}" name="{{ machine_name }}">
+                <option class="default" value="0">Select a Scorer</option>
+                {% if tc.scorer %}
+                <option value="{{ tc.scorer_id }}" selected="selected">{{ tc.scorer }}</option>
+                {% endif %}
+                {% for scorer in sd_avail %}
+                <option value="{{ scorer.scorer.id }}">{{ scorer.scorer.username }}</option>
+                {% endfor %}
+            </select>
+        </span>
     </span>
 </div>
 

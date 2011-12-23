@@ -1,6 +1,7 @@
 import datetime
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.models import Group
 from models import *
 from utils.time import get_microseconds
 from scoring.views import scorekeeper
@@ -156,17 +157,90 @@ def check_scorer_status(request):
 
 
 # Scorekeeper Functions
+@staff_member_required
 def pick_scorer(request):
-#TODO actually assign the scorer
-#TODO if match isn't over yet, assign this scorer to the current match.
-#TODO make sure that you can unset scorer so that you can shuffle around scorers without a 5th in the system.
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    match = ScoringSystem.objects.all()[0].current_match
+    tower_name = request.GET.get('tower_name', '')
+    scorer_id = request.GET.get('scorer_id', '')
+
+    if tower_name == 'low_red':
+        try:
+            sd = match.scorer_low_red.scoringdevice
+            sd.tower = None
+            sd.save()
+        except: pass
+        if str(scorer_id) == '0': match.scorer_low_red = None
+        else: match.scorer_low_red_id = scorer_id
+    elif tower_name == 'high_red':
+        try:
+            sd = match.scorer_high_red.scoringdevice
+            sd.tower = None
+            sd.save()
+        except: pass
+        if str(scorer_id) == '0': match.scorer_high_red = None
+        else: match.scorer_high_red_id = scorer_id
+    elif tower_name == 'low_blue':
+        try:
+            sd = match.scorer_low_blue.scoringdevice
+            sd.tower = None
+            sd.save()
+        except: pass
+        if str(scorer_id) == '0': match.scorer_low_blue = None
+        else: match.scorer_low_blue_id = scorer_id
+    elif tower_name == 'high_blue':
+        try:
+            sd = match.scorer_high_blue.scoringdevice
+            sd.tower = None
+            sd.save()
+        except: pass
+        if str(scorer_id) == '0': match.scorer_high_blue = None
+        else: match.scorer_high_blue_id = scorer_id
+
+    match.save()
+    if str(scorer_id) != '0':
+        sd, _ = ScoringDevice.objects.get_or_create(scorer_id=scorer_id)
+        sd.tower = Tower.objects.get(name = tower_name)
+        sd.save()
+    return scorekeeper(request)
+
+@staff_member_required
+def reset_match(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    match = ScoringSystem.objects.all()[0].current_match
+    match.reset()
+    ScoringDevice.objects.all().update(on_center=False)
     return HttpResponse(json.dumps({'success': True}), 'application/json')
 
-def select_match(request):
-    ss = ScoringSystem.objects.all()[0]
-    ss.current_match = Match.objects.get(id=request.GET.get('match_id'))
-    ss.save()
-#TODO Return normal status response to update all of the other modules
-#TODO If match isn't over assign current scorers to the match history.
+@staff_member_required
+def start_match(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    reset_match(request)
+    match = ScoringSystem.objects.all()[0].current_match
+    match.actual_start = datetime.datetime.now()
+    match.save()
     return scorekeeper(request)
-#    return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+@staff_member_required
+def select_match(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    ss = ScoringSystem.objects.all()[0]
+    match = Match.objects.get(id=request.GET.get('match_id'))
+    ss.current_match = match
+    ss.save()
+    if not match.actual_start:
+        for sd in ScoringDevice.objects.filter(tower__isnull=False):
+            if sd.tower.name == 'low_red': match.scorer_low_red = sd.scorer
+            elif sd.tower.name == 'high_red': match.scorer_high_red = sd.scorer
+            elif sd.tower.name == 'low_blue': match.scorer_low_blue = sd.scorer
+            elif sd.tower.name == 'high_blue': match.scorer_high_blue = sd.scorer
+        match.save()
+    return scorekeeper(request)

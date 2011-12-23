@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
@@ -44,6 +44,11 @@ def scorer(request):
 
 @staff_member_required
 def timer(request, get_dict=False):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        group = Group.objects.get(name='Timer')
+        if group not in request.user.groups.all():
+            raise Http404
     match = ScoringSystem.objects.all()[0].current_match
     match_state = 'pre_match'
     try:
@@ -90,6 +95,10 @@ def timer(request, get_dict=False):
 
 @staff_member_required
 def scorekeeper(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    del(group)
     try: ss = ScoringSystem.objects.all()[0]
     except:
         ss = ScoringSystem()
@@ -147,12 +156,18 @@ def scorekeeper(request):
                 elif 'low_red'==sd.tower.name: confirmed = match.scorer_low_red_confirmed
             except: confirmed = False
             towers[sd.tower.name] = sd.get_stats(confirmed)
-        del(sd)
-        del(confirmed)
-
+        try:del(sd)
+        except: pass
+        try:del(confirmed)
+        except: pass
     matches = Match.objects.all()
     del(ss)
     if request.is_ajax():
+        sd_avail_list = []
+        for sd in sd_avail:
+            sd_avail_list.append({'id': sd.scorer.id, 'username': sd.scorer.username })
+        try: del(sd)
+        except: pass
         del(sd_avail)
         del(matches)
         del(request)

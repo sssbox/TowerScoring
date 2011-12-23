@@ -31,5 +31,6 @@
     <button {% if timer_dict.match_state != 'pre_match' %}disabled="disabled"{% endif %} 
         id="start" style="margin-right:10%;">Start</button>
     <button {% if timer_dict.match_state != 'match' %}disabled="disabled"{% endif %}
-        id="abort" style="margin-left:10%;">Abort</button>
+        id="abort" style="margin-left:10%;{% if timer_dict.match_state == 'done' %} display:none;{% endif %}">Abort</button>
+    <button id="reset" style="margin-left:10%;{% if timer_dict.match_state != 'done' %} display:none;{% endif %}">Reset</button>
 </div>
