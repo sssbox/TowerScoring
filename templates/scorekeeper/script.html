@@ -105,14 +105,13 @@
                 {
                     $("#"+color+'_'+team+'_id').html(data.alliances[color][team]['t']['number']) ;
                     $("#"+color+'_'+team+'_name').html(data.alliances[color][team]['t']['name']) ;
-                    if(data.alliances[color][team]['av'])
-                        $("#"+color+'_'+team+'_has_av').attr('checked', 'checked')
-                    else
-                        $("#"+color+'_'+team+'_has_av').attr('checked', '')
-                    if(data.alliances[color][team]['gv'])
-                        $("#"+color+'_'+team+'_has_gv').attr('checked', 'checked')
-                    else
-                        $("#"+color+'_'+team+'_has_gv').attr('checked', '')
+                    for (v in ['av', 'gv']) {
+                        v = ['av', 'gv'][v] ;
+                        if(data.alliances[color][team][v])
+                            $("#"+color+'_'+team+'_has_'+v).attr('checked', 'checked')
+                        else
+                            $("#"+color+'_'+team+'_has_'+v).attr('checked', '')
+                    }
                 }
             }
         }
@@ -213,6 +212,20 @@
             cache: false,
             type: "GET",
             success: load_data_on_select_scorer
+        });
+    });
+
+$("input.robot_present").change(function(e){
+        if($(this).is(':checked'))
+            var state = 'True' ;
+        else
+            var state = 'False' ;
+        var data = {code:$(this).attr('id'), 'is_present':state} ;
+        $.ajax({
+            url: "{% url match_robot_present %}",
+            data: data,
+            cache: false,
+            type: "GET"
         });
     });
 

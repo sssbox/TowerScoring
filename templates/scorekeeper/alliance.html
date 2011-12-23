@@ -7,11 +7,11 @@
         <span id="{{ color|lower }}_team_1_name">{{ alliance.team_1.t.name }}</span>
     <div class="has_robot">
         <label for="{{ color|lower }}_team_1_has_av">Has AV</label>
-        <input type="checkbox" id="{{ color|lower }}_team_1_has_av"
+        <input type="checkbox" class="robot_present" id="{{ color|lower }}_team_1_has_av"
             {% if alliance.team_1.av %}checked="checked"{% endif %} />
         <br />
         <label for="{{ color|lower }}_team_1_has_gv">Has GV</label>
-        <input type="checkbox" id="{{ color|lower }}_team_1_has_gv"
+        <input type="checkbox" class="robot_present" id="{{ color|lower }}_team_1_has_gv"
             {% if alliance.team_1.gv %}checked="checked"{% endif %} />
     </div>
 </div>
@@ -21,11 +21,11 @@
         <span id="{{ color|lower }}_team_2_name">{{ alliance.team_2.t.name }}</span>
     <div class="has_robot">
         <label for="{{ color|lower }}_team_2_has_av">Has AV</label>
-        <input type="checkbox" id="{{ color|lower }}_team_2_has_av"
+        <input type="checkbox" class="robot_present" id="{{ color|lower }}_team_2_has_av"
             {% if alliance.team_2.av %}checked="checked"{% endif %} />
         <br />
         <label for="{{ color|lower }}_team_2_has_gv">Has GV</label>
-        <input type="checkbox" id="{{ color|lower }}_team_2_has_gv"
+        <input type="checkbox" class="robot_present" id="{{ color|lower }}_team_2_has_gv"
             {% if alliance.team_2.gv %}checked="checked"{% endif %} />
     </div>
 </div>

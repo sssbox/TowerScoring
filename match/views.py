@@ -229,6 +229,25 @@ def start_match(request):
     return scorekeeper(request)
 
 @staff_member_required
+def robot_present(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    match = ScoringSystem.objects.all()[0].current_match
+    code = request.GET.get('code', '')
+    state = request.GET.get('is_present', 'False') == 'True'
+    if code == 'red_team_1_has_av': match.red_1_av_present = state
+    elif code == 'red_team_2_has_av': match.red_2_av_present = state
+    elif code == 'red_team_1_has_gv': match.red_1_gv_present = state
+    elif code == 'red_team_2_has_gv': match.red_2_gv_present = state
+    elif code == 'blue_team_1_has_av': match.blue_1_av_present = state
+    elif code == 'blue_team_2_has_av': match.blue_2_av_present = state
+    elif code == 'blue_team_1_has_gv': match.blue_1_gv_present = state
+    elif code == 'blue_team_2_has_gv': match.blue_2_gv_present = state
+    match.save()
+    return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+@staff_member_required
 def select_match(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():
