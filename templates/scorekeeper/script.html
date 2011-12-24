@@ -215,7 +215,21 @@
         });
     });
 
-$("input.robot_present").change(function(e){
+    $("button#save_scores").click(function(e){
+        e.preventDefault() ;
+        var data = {} ;
+        $("#score_table input.score_div").each(function(e){
+            data[$(this).attr('id')] = $(this).val() ;
+        }) ;
+        $.ajax({
+            url: "{% url match_update_score %}",
+            data: data,
+            cache: false,
+            type: "GET"
+        });
+    });
+
+    $("input.robot_present").change(function(e){
         if($(this).is(':checked'))
             var state = 'True' ;
         else

@@ -248,6 +248,25 @@ def robot_present(request):
     return HttpResponse(json.dumps({'success': True}), 'application/json')
 
 @staff_member_required
+def update_score(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    match = ScoringSystem.objects.all()[0].current_match
+    match.blue_score_pre_penalty = int(request.GET.get('blue_score_pre_penalty', '0'))
+    match.red_score_pre_penalty = int(request.GET.get('red_score_pre_penalty', '0'))
+    match.blue_penalties = int(request.GET.get('blue_penalties', '0'))
+    match.red_penalties = int(request.GET.get('red_penalties', '0'))
+    match.blue_bonus = int(request.GET.get('blue_bonus', '0'))
+    match.red_bonus = int(request.GET.get('red_bonus', '0'))
+    match.red_score = match.red_score_pre_penalty - match.red_penalties + match.red_bonus
+    match.blue_score = match.blue_score_pre_penalty - match.blue_penalties + match.blue_bonus
+    match.save()
+    # TODO Update score for all participating teams based on historical matches participated in.
+    # TODO add confirmation popup to "Save Scores" button.
+    return HttpResponse(json.dumps({'success': True}), 'application/json')
+
+@staff_member_required
 def select_match(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():

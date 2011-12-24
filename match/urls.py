@@ -19,4 +19,5 @@ urlpatterns = patterns('match.views',
     url(r'^start_match/$', 'start_match', name='match_start_match'),
     url(r'^reset_match/$', 'reset_match', name='match_reset_match'),
     url(r'^robot_present/$', 'robot_present', name='match_robot_present'),
+    url(r'^update_score/$', 'update_score', name='match_update_score'),
 )
