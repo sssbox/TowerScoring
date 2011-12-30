@@ -262,8 +262,10 @@ def update_score(request):
     match.red_score = match.red_score_pre_penalty - match.red_penalties + match.red_bonus
     match.blue_score = match.blue_score_pre_penalty - match.blue_penalties + match.blue_bonus
     match.save()
-    # TODO Update score for all participating teams based on historical matches participated in.
-    # TODO add confirmation popup to "Save Scores" button.
+    match.red_1.update_points()
+    match.red_2.update_points()
+    match.blue_1.update_points()
+    match.blue_2.update_points()
     return HttpResponse(json.dumps({'success': True}), 'application/json')
 
 @staff_member_required

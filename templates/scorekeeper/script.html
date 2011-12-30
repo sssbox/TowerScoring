@@ -217,16 +217,19 @@
 
     $("button#save_scores").click(function(e){
         e.preventDefault() ;
-        var data = {} ;
-        $("#score_table input.score_div").each(function(e){
-            data[$(this).attr('id')] = $(this).val() ;
-        }) ;
-        $.ajax({
-            url: "{% url match_update_score %}",
-            data: data,
-            cache: false,
-            type: "GET"
-        });
+        if(confirm("Are you sure? This will update all scores for this match and the teams in this match."))
+        {
+            var data = {} ;
+            $("#score_table input.score_div").each(function(e){
+                data[$(this).attr('id')] = $(this).val() ;
+            }) ;
+            $.ajax({
+                url: "{% url match_update_score %}",
+                data: data,
+                cache: false,
+                type: "GET"
+            });
+        }
     });
 
     $("input.robot_present").change(function(e){

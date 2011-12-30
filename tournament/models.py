@@ -14,5 +14,35 @@ class Team(models.Model):
     match_points = models.IntegerField(default=0)
     highest_match_points = models.IntegerField(default=0)
 
+    def update_points(self):
+        self.match_points = 0
+        self.highest_match_points = 0
+        # TODO double check that we want (as coded) highest_match_points to be attendance based.
+        for match in self.as_red_1.all():
+            this_score = 0
+            if match.red_1_av_present: this_score += match.red_score
+            if match.red_1_gv_present: this_score += match.red_score
+            self.match_points += this_score
+            self.highest_match_points = max(self.highest_match_points, this_score)
+        for match in self.as_red_2.all():
+            this_score = 0
+            if match.red_2_av_present: this_score += match.red_score
+            if match.red_2_gv_present: this_score += match.red_score
+            self.match_points += this_score
+            self.highest_match_points = max(self.highest_match_points, this_score)
+        for match in self.as_blue_1.all():
+            this_score = 0
+            if match.blue_1_av_present: this_score += match.blue_score
+            if match.blue_1_gv_present: this_score += match.blue_score
+            self.match_points += this_score
+            self.highest_match_points = max(self.highest_match_points, this_score)
+        for match in self.as_blue_2.all():
+            this_score = 0
+            if match.blue_2_av_present: this_score += match.blue_score
+            if match.blue_2_gv_present: this_score += match.blue_score
+            self.match_points += this_score
+            self.highest_match_points = max(self.highest_match_points, this_score)
+        self.save()
+
     def __unicode__(self):
         return str(self.number) + ' - ' + self.name
