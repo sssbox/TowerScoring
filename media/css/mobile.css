@@ -1,4 +1,4 @@
-html, body { height: 100%; margin: 0; padding: 0; }
+html, body { height: 100%; margin: 0; padding: 0; text-align: center; }
 a img { border: none; }
 img a { border: none; }
 img { border: none; }
@@ -8,7 +8,15 @@ img { border: none; }
 .red { background: #f00; }
 .blue { background: #00f; }
 
-.scoring_col { float: left; }
+.light-red { background: #f55; }
+.light-blue { background: #55f; }
+
+
+.state { width: 100%; margin: auto; }
+
+.scoring_cell { padding: 10px; border: 1px solid; } 
+
+.scoring_col { float: left; width: 50% ; }
 
 .white_font { color: #fff; }
 
