@@ -173,7 +173,8 @@ class MatchEvent(models.Model):
     alliance = models.CharField(max_length=6, choices=ALLIANCE_CHOICES)
     LEVEL_CHOICES=((1, 'Low GV'),(2, 'High GV'),(3, 'AV'))
     level = models.IntegerField(choices=LEVEL_CHOICES)
+    collision_id = models.IntegerField()
 
     class Meta:
-        unique_together = ('match', 'id')
+        unique_together = ('scorer', 'collision_id')
         ordering = ['-id']

@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from django.forms.models import model_to_dict
 
-from match.models import ScoringDevice, ScoringSystem, Match
+from match.models import ScoringDevice, ScoringSystem, Match, MatchEvent
 from utils.time import elapsed_time, get_microseconds
 
 import datetime
@@ -40,6 +40,8 @@ def scorer(request):
             primary = 'blue'
             non_primary = 'red'
     except: no_match = True
+    try: next_id = MatchEvent.objects.filter(scorer=request.user).order_by('-collision_id')[0].collision_id + 1
+    except: next_id = 1
     return render_to_response('mobile_scorer/scorer.html', locals())
 
 @staff_member_required

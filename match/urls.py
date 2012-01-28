@@ -11,7 +11,7 @@ urlpatterns = patterns('match.views',
             name='match_finished_scoring_match'),
     url(r'^check_scorer_status/$', 'check_scorer_status', \
             name='match_check_scorer_status'),
-    url(r'^score_event/$', 'score_event', name='match_score_event'),
+    url(r'^batch_actions/$', 'batch_actions', name='match_batch_actions'),
 
     # Scorekeeper Controller
     url(r'^pick_scorer/$', 'pick_scorer', name='match_pick_scorer'),

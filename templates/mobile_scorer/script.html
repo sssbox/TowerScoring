@@ -1,4 +1,6 @@
 <script type="text/javascript">
+    {% include "mobile_scorer/action_queue.js" %}
+
     $('.scoring_cell').click(function(e){
         e.preventDefault();
         var obj = $(this) ;
@@ -10,15 +12,7 @@
         if (obj.is('.red')) alliance = 'red' ;
         else if (obj.is('.blue')) alliance = 'blue' ;
         var data = {alliance: alliance, level: level} ;
-        $.ajax({
-            url: "{% url match_score_event %}",
-            data: data,
-            type: "GET",
-            success: function(){
-                obj.toggleClass("white_font") ;
-            },
-            cache: false
-        });
+        actions.push('score', data, true) ;
     });
     var current_state = '' ;
     $('#return_to_normal_link').click(function(e){
@@ -60,7 +54,9 @@
         $.ajax({
             url: "{% url match_check_scorer_status %}",
             cache: false,
+            timeout: 1000,
             success: function(data){
+                setTimeout(check_status, 500) ;
                 $('span.match_number').html(data.current_match) ;
                 if(current_state == 'no_match_reload' && data.current_state != 'no_match')
                 {
@@ -114,11 +110,41 @@
             }
         });
     }
-    setInterval(check_status, 500) ;
     check_status();
     {% if no_match %}
         $("div.state").hide() ;
         $("div.no-match-state").show() ;
         current_state = 'no_match_reload' ;
     {% endif %}
+    
+
+    $( document ).ready( function() {
+        var setBodyScale = function() {
+            var scaleSource = $('body').width(),
+                scaleFactor = 0.40,
+                scoringScaleFactor = 0.3,
+                maxScale = 170,
+                minScale = 100;
+
+            var fontSize = scaleSource * scaleFactor;
+
+            if (fontSize > maxScale) fontSize = maxScale;
+            if (fontSize < minScale) fontSize = minScale;
+
+            var scoringFontSize = scaleSource * scoringScaleFactor;
+            
+            if (scoringFontSize > maxScale) scoringFontSize = maxScale;
+            if (scoringFontSize < minScale) scoringFontSize = minScale;
+
+            $('body').css('font-size', fontSize + '%');
+            $('.scoring_cell').css('font-size', scoringFontSize + '%');
+        }
+
+        $(window).resize(function(){
+            setBodyScale();
+        });
+
+        //Fire it when the page first loads:
+        setBodyScale();
+    });
 </script>

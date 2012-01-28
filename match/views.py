@@ -70,40 +70,42 @@ def update_from_match_event(me):
             match.blue_score += SCORE_SETTINGS[level]
             match.blue_score_pre_penalty += SCORE_SETTINGS[level]
     match.save()
-    return match
 
-# inputs POSTed:
-# alliance = red or blue -- alliance who scored on the goal
-# level = 1, 2 or 3 ( 1 low gv (or only gv), 2 high gv, 3 av score)
-# TODO allow batched match events coming in in case there is a communication hickup
-# TODO get uniqueIDs from each scoring device per match event so that match events
-#      can't be duplicated... Also say which match events are properly saved
-#      in each reponse so that events can come off the queue at the scoring device.
+def score_match_event(user, match, tower, key, data):
+    if not MatchEvent.objects.filter(scorer=user, collision_id=key).exists():
+        me = MatchEvent(match=match, microseconds=get_microseconds(), \
+            scorer=user, tower=tower, alliance=data['alliance'], \
+            level=int(data['level']), collision_id=key)
+        me.save()
+        update_from_match_event(me)
+
 @staff_member_required
-def score_event(request):
+def batch_actions(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
-    now = datetime.datetime.now()
     match = ScoringSystem.objects.all()[0].current_match
     if scoring_device.on_center:
         tower = Tower.objects.get(name='center')
     else:
         tower = scoring_device.tower
-    alliance = request.GET.get('alliance', '')
-    if not alliance:
-        print 'Error!!! No alliance.' # TODO
-    level = request.GET.get('level', '')
-    if not level:
-        print 'Error!!! No level.' # TODO
-    me = MatchEvent(match=match, microseconds=get_microseconds(), \
-            scorer=request.user, tower=tower, alliance=alliance, \
-            level=int(level))
-    me.save()
 
-    update_from_match_event(me)
-    return HttpResponse(json.dumps({'success': True}), 'application/json')
+    actions = json.loads(request.GET.get('actions', {}))
+    keys = actions.keys()
+    keys.sort()
+    saved_actions = []
+
+    for key in keys:
+        data = actions[key]['data']
+        if actions[key]['action'] == 'score':
+            score_match_event(request.user, match, tower, key, data)
+#        elif actions[key]['action'] == ' done_scoring_center?
+        else: continue
+        saved_actions.append(key)
+
+    return HttpResponse(json.dumps({'success': True, 'action_ids':saved_actions}), 'application/json')
 
 @staff_member_required
 def finished_scoring_center(request):
+
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
     if scoring_device.on_center:
         scoring_device.on_center = False
@@ -307,6 +309,6 @@ def delete_match_event(request):
     match.reset_score()
     start_match_lighting(dry_run_only=True)
     for me in match.matchevent_set.all().order_by('id'):
-        match = update_from_match_event(me)
+        update_from_match_event(me)
     match.calculate_scores()
     return scorekeeper(request)
