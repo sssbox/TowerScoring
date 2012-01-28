@@ -28,18 +28,18 @@
         <div class="normal-state state" style="display: none;">
 
             <div class="left_scoring_col scoring_col">
-                <div class="scoring_cell {{ non_primary }}">AV Scoring cell</div>
-                {% if not is_low %}
-                <div class="scoring_cell {{ non_primary }}">High GV Scoring cell</div>
-                {% endif %}
-                <div class="scoring_cell {{ non_primary }}">Low GV Scoring cell</div>
+                <div class="scoring_cell level_3 {{ non_primary }}">AV Scoring cell</div>
+                <div class="scoring_cell level_2 {{ non_primary }}"
+                    {% if is_low %}style="display: none;"{% endif %}>
+                    High GV Scoring cell</div>
+                <div class="scoring_cell level_1 {{ non_primary }}">Low GV Scoring cell</div>
             </div>
             <div class="right_scoring_col scoring_col">
-                <div class="scoring_cell {{ primary }}">AV Scoring cell</div>
-                {% if not is_low %}
-                <div class="scoring_cell {{ primary }}">High GV Scoring cell</div>
-                {% endif %}
-                <div class="scoring_cell {{ primary }}">Low GV Scoring cell</div>
+                <div class="scoring_cell level_3 {{ primary }}">AV Scoring cell</div>
+                <div class="scoring_cell level_2 {{ primary }}"
+                    {% if is_low %}style="display: none;"{% endif %}>
+                    High GV Scoring cell</div>
+                <div class="scoring_cell level_1 {{ primary }}">Low GV Scoring cell</div>
             </div>
         </div>
 

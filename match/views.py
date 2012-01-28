@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 from models import *
 from utils.time import get_microseconds
 from scoring.views import scorekeeper
+from match.tower_state import *
 
 try: import simplejson as json
 except: import json
@@ -43,7 +44,6 @@ def update_from_match_event(me):
                     else:
                         match.red_center_active = True
                         match.red_center_active_start = datetime.datetime.now()
-                    match.save()
                     alliance_towers.update(state='off')
                     center = Tower.objects.get(name='center')
                     low_center = center.towerlevel_set.get(level=1)
@@ -60,19 +60,25 @@ def update_from_match_event(me):
                 else:
                     match.blue_score += SCORE_SETTINGS[level]
                     match.blue_score_pre_penalty += SCORE_SETTINGS[level]
-        elif 'center' in tower.name: # scoring on center tower
-            if alliance == 'red':
-                match.red_score += SCORE_SETTINGS[level]
-                match.red_score_pre_penalty += SCORE_SETTINGS[level]
-            else:
-                match.blue_score += SCORE_SETTINGS[level]
-                match.blue_score_pre_penalty += SCORE_SETTINGS[level]
         else: # alliance attempting to descore
             pass # TODO
+    elif 'center' in tower.name: # scoring on center tower
+        if alliance == 'red':
+            match.red_score += SCORE_SETTINGS[level]
+            match.red_score_pre_penalty += SCORE_SETTINGS[level]
+        else:
+            match.blue_score += SCORE_SETTINGS[level]
+            match.blue_score_pre_penalty += SCORE_SETTINGS[level]
+    match.save()
+    return match
 
 # inputs POSTed:
 # alliance = red or blue -- alliance who scored on the goal
 # level = 1, 2 or 3 ( 1 low gv (or only gv), 2 high gv, 3 av score)
+# TODO allow batched match events coming in in case there is a communication hickup
+# TODO get uniqueIDs from each scoring device per match event so that match events
+#      can't be duplicated... Also say which match events are properly saved
+#      in each reponse so that events can come off the queue at the scoring device.
 @staff_member_required
 def score_event(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
@@ -82,10 +88,10 @@ def score_event(request):
         tower = Tower.objects.get(name='center')
     else:
         tower = scoring_device.tower
-    alliance = request.POST.get('alliance', '')
+    alliance = request.GET.get('alliance', '')
     if not alliance:
         print 'Error!!! No alliance.' # TODO
-    level = request.POST.get('level', '')
+    level = request.GET.get('level', '')
     if not level:
         print 'Error!!! No level.' # TODO
     me = MatchEvent(match=match, microseconds=get_microseconds(), \
@@ -214,6 +220,9 @@ def reset_match(request):
     match = ScoringSystem.objects.all()[0].current_match
     match.reset()
     ScoringDevice.objects.all().update(on_center=False)
+
+    #TODO change to end_match_lighting+add a delayed task for starting prematch lighting
+    prematch_lighting()
     return scorekeeper(request)
 
 @staff_member_required
@@ -226,6 +235,7 @@ def start_match(request):
     ScoringDevice.objects.all().update(on_center=False)
     match.actual_start = datetime.datetime.now()
     match.save()
+    start_match_lighting()
     return scorekeeper(request)
 
 @staff_member_required
@@ -259,9 +269,7 @@ def update_score(request):
     match.red_penalties = int(request.GET.get('red_penalties', '0'))
     match.blue_bonus = int(request.GET.get('blue_bonus', '0'))
     match.red_bonus = int(request.GET.get('red_bonus', '0'))
-    match.red_score = match.red_score_pre_penalty - match.red_penalties + match.red_bonus
-    match.blue_score = match.blue_score_pre_penalty - match.blue_penalties + match.blue_bonus
-    match.save()
+    match.calculate_scores()
     match.red_1.update_points()
     match.red_2.update_points()
     match.blue_1.update_points()
@@ -284,4 +292,21 @@ def select_match(request):
             elif sd.tower.name == 'low_blue': match.scorer_low_blue = sd.scorer
             elif sd.tower.name == 'high_blue': match.scorer_high_blue = sd.scorer
         match.save()
+    prematch_lighting()
+    return scorekeeper(request)
+
+@staff_member_required
+def delete_match_event(request):
+    group = Group.objects.get(name='Scorekeepers')
+    if group not in request.user.groups.all():
+        raise Http404
+    me = MatchEvent.objects.get(id=request.GET.get('me_id'))
+    me.delete()
+
+    match = ScoringSystem.objects.all()[0].current_match
+    match.reset_score()
+    start_match_lighting(dry_run_only=True)
+    for me in match.matchevent_set.all().order_by('id'):
+        match = update_from_match_event(me)
+    match.calculate_scores()
     return scorekeeper(request)

@@ -1,9 +1,18 @@
 <script type="text/javascript">
     $('.scoring_cell').click(function(e){
         e.preventDefault();
-        obj = $(this) ;
+        var obj = $(this) ;
+        var level = 0 ;
+        if (obj.is('.level_1')) level = 1 ;
+        else if (obj.is('.level_2')) level = 2 ;
+        else if (obj.is('.level_3')) level = 3 ;
+        var alliance = '';
+        if (obj.is('.red')) alliance = 'red' ;
+        else if (obj.is('.blue')) alliance = 'blue' ;
+        var data = {alliance: alliance, level: level} ;
         $.ajax({
-            url: "{% url test_ajax %}",
+            url: "{% url match_score_event %}",
+            data: data,
             type: "GET",
             success: function(){
                 obj.toggleClass("white_font") ;

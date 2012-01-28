@@ -88,13 +88,22 @@ class Match(models.Model):
     scorer_high_blue = models.ForeignKey(User, related_name="scoring_high_blue", null=True, blank=True)
     scorer_high_blue_confirmed = models.BooleanField(default=False)
 
-    def reset(self):
-        self.actual_start = None
-        self.matchevent_set.all().delete()
+    def calculate_scores(self):
+        self.red_score = self.red_score_pre_penalty + self.red_bonus - self.red_penalties
+        self.blue_score = self.blue_score_pre_penalty + self.blue_bonus - self.blue_penalties
+        self.save()
+
+    def reset_score(self):
         self.red_score = 0
         self.blue_score = 0
         self.red_score_pre_penalty = 0
         self.blue_score_pre_penalty = 0
+        self.save()
+
+    def reset(self):
+        self.reset_score()
+        self.actual_start = None
+        self.matchevent_set.all().delete()
         self.red_penalties = 0
         self.blue_penalties = 0
         self.red_bonus = 0

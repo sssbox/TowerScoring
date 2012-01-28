@@ -7,7 +7,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
     url(r'^$', 'views.index', name='index'),
     url(r'^timer/$', 'views.timer', name='timer'),
     url(r'^scorekeeper/$', 'views.scorekeeper', name='scorekeeper'),
@@ -16,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^match/', include('match.urls')),
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/site_media/favicon.ico'}),
 )
 
 if settings.DEBUG:

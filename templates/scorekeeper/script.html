@@ -154,9 +154,14 @@
                 c.find('.match_event_tower_2').html("Blue") ;
                 c.find('.match_event_tower_2').addClass('light-blue') ;
             }
+            c.find('.delete_event_link').attr('name', match_event.id) ;
             event_log.prepend(c) ;
             c.show() ;
         }
+        $("a.delete_event_link").click(function(e){
+            e.preventDefault() ;
+            delete_event($(this)) ;
+        }) ;
     }
     function load_data_on_match_change(data)
     {
@@ -180,6 +185,12 @@
         });
     }
     setInterval(update_display, 1000) ;
+    // TODO instead of setInterval, call update_display and have success/fail functions
+    //      call itself. If it fails, display a connection lost display. Set a timer in
+    //      update_display so we can say "connection may be lost..." after x amount of time
+    //      and so we can kill the ajax call and refresh after y amount of time.
+    //      Also: It may be good to be able to cancel or turn off update_display while other
+    //      functions/actions are going.
 
     $("#start").click(function(e){
         e.preventDefault() ;
@@ -256,6 +267,22 @@
             success: load_data_on_match_change
         });
     });
+
+    function delete_event(obj)
+    {
+        var data = {me_id: obj.attr('name')} ;
+        $.ajax({
+            url: "{% url match_delete_match_event %}",
+            data: data,
+            cache: false,
+            type: "GET",
+            success: load_data_none
+        }) ;
+    }
+    $("a.delete_event_link").click(function(e){
+        e.preventDefault() ;
+        delete_event($(this)) ;
+    }) ;
 
     $( document ).ready( function() {
         var setBodyScale = function() {
