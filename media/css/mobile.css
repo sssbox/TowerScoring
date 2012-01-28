@@ -5,25 +5,28 @@ img { border: none; }
 
 .cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
 
-.red { background: #f00; }
-.blue { background: #00f; }
 
-.light-red { background: #f55; }
-.light-blue { background: #55f; }
+.red { background: #f55; }
+.blue { background: #55f; }
 
+.real-red { background: #f00; }
+.real-blue { background: #00f; }
 
-.state { width: 100%; margin: auto; }
+.all { width: 100%; height: 100%; margin: auto; }
+.title-bar { width: 100%; height: 10%; display: table; }
+.controller-area { width: 100%; height: 80%; margin:auto; }
+.footer-bar { width: 100%; height: 10%; display: table; }
 
-.scoring_cell { padding: 10px; border: 1px solid; } 
+.state { width: 100%; height:100%; margin: auto; }
 
-.scoring_col { float: left; width: 50% ; }
+.scoring_col { float: left;  height:100%; width: 50% ; margin:auto;}
 
-.white_font { color: #fff; }
+.thirds .scoring_cell { height: 33% ; }
+.halves .scoring_cell { height: 50% ; }
+.left_scoring_col .scoring_cell { border-right: 1px black solid; }
+.right_scoring_col .scoring_cell { border-left: 1px black solid; }
+.scoring_cell { border-top: 2px black solid; }
+.scoring_cell.level_1 { border-bottom: 2px black solid; }
 
-/* 
-.left_scoring_col
-.right_scoring_col
-
-.scoring_cell { float: left; }
-.second { float: left; }
-*/
+.scoring_cell { display: table; width: 100%; }
+.vcenter { display: table-cell; vertical-align: middle; }

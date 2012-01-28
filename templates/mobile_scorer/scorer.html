@@ -6,65 +6,81 @@
 
 {% block entire_body %}
 
-    <div class="title-bar">
-        {% if is_red %}Red{% else %}Blue{% endif %} 
-        {% if is_low %}Short{% else %}Tall{% endif %} Controller Match 
-        <span class="match_number">x</span>
+    <div class="all">
+
+        <div class="title-bar">
+            <div class="vcenter">
+                <span id="controler_name">{% if is_red %}Red{% else %}Blue{% endif %} 
+                    {% if is_low %}Short{% else %}Tall{% endif %}</span>
+                Controller Match 
+                <span class="match_number">x</span>
+            </div>
+        </div>
+
+        <div class="controller-area">
+            <div class="initial-state state">
+                Waiting for Server.
+            </div>
+            <div class="prematch-state state" style="display: none;">
+                Prematch for match <span class="match_number">x</span>
+            </div>
+            <div class="no-match-state state" style="display: none;">
+                No match loaded into scoring device yet.
+            </div>
+            <div class="match-done-confirmed-state state" style="display: none;">
+                Match <span class="match_number">x</span> done. Waiting for next match.
+            </div>
+            <div class="normal-state state {% if is_low %}halves{% else %}thirds{% endif %}" style="display: none;">
+
+                <div class="left_scoring_col scoring_col">
+                    <div class="scoring_cell level_3 {{ non_primary }}">
+                        <div class="vcenter">AV</div>
+                    </div>
+                    <div class="scoring_cell level_2 {{ non_primary }}"
+                        {% if is_low %}style="display: none;"{% endif %}>
+                        <div class="vcenter">High GV</div>
+                    </div>
+                    <div class="scoring_cell level_1 {{ non_primary }}">
+                        <div class="vcenter">Low GV</div>
+                    </div>
+                </div>
+                <div class="right_scoring_col scoring_col">
+                    <div class="scoring_cell level_3 {{ primary }}">
+                        <div class="vcenter">AV</div>
+                    </div>
+                    <div class="scoring_cell level_2 {{ primary }}"
+                        {% if is_low %}style="display: none;"{% endif %}>
+                        <div class="vcenter">High GV</div>
+                    </div>
+                    <div class="scoring_cell level_1 {{ primary }}">
+                        <div class="vcenter">Low GV</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-state state" style="display:none;">
+                scoring center
+            </div>
+        </div>
+
+
+        <div class="footer-bar">
+            <div class="normal-state state vcenter">
+                <div class="confirm-match-score" style="display:none;">
+                    <a href="#" id="confirm_match_link">Done Scoring Match</a>
+                </div>
+            </div>
+            <div class="center-state state vcenter" style="display:none;">
+                <div class="confirm-match-score" style="display:none;">
+                    <a href="#" id="confirm_match_link">Done Scoring Match</a>
+                </div>
+                <div class="return-to-normal vcenter" style="display:none;">
+                    <a href="#" id="return_to_normal_link">Done Scoring Center</a>
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <div class="controller-area">
-        <div class="initial-state state">
-            Waiting for Server.
-        </div>
-        <div class="prematch-state state" style="display: none;">
-            Prematch for match <span class="match_number">x</span>
-        </div>
-        <div class="no-match-state state" style="display: none;">
-            No match loaded into scoring device yet.
-        </div>
-        <div class="match-done-confirmed-state state" style="display: none;">
-            Match <span class="match_number">x</span> done. Waiting for next match.
-        </div>
-        <div class="normal-state state" style="display: none;">
-
-            <div class="left_scoring_col scoring_col">
-                <div class="scoring_cell level_3 {{ non_primary }}">AV Scoring cell</div>
-                <div class="scoring_cell level_2 {{ non_primary }}"
-                    {% if is_low %}style="display: none;"{% endif %}>
-                    High GV Scoring cell</div>
-                <div class="scoring_cell level_1 {{ non_primary }}">Low GV Scoring cell</div>
-            </div>
-            <div class="right_scoring_col scoring_col">
-                <div class="scoring_cell level_3 {{ primary }}">AV Scoring cell</div>
-                <div class="scoring_cell level_2 {{ primary }}"
-                    {% if is_low %}style="display: none;"{% endif %}>
-                    High GV Scoring cell</div>
-                <div class="scoring_cell level_1 {{ primary }}">Low GV Scoring cell</div>
-            </div>
-        </div>
-
-        <div class="center-state state" style="display:none;">
-            scoring center
-        </div>
-    </div>
-
-
-    <div class="footer-bar">
-        <div class="normal-state state">
-            <div class="confirm-match-score" style="display:none;">
-                <a href="#" id="confirm_match_link">Done Scoring Match</a>
-            </div>
-        </div>
-        <div class="center-state state" style="display:none;">
-            <div class="confirm-match-score" style="display:none;">
-                <a href="#" id="confirm_match_link">Done Scoring Match</a>
-            </div>
-            <div class="return-to-normal" style="display:none;">
-                <a href="#" id="return_to_normal_link">Done Scoring Center</a>
-            </div>
-        </div>
-    </div>
-
 {% endblock entire_body %}
 
 {% block script %}
