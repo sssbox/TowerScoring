@@ -5,12 +5,6 @@ from django.conf import settings
 
 urlpatterns = patterns('match.views',
     # Mobile Scorer
-    url(r'^finished_scoring_center/$', 'finished_scoring_center', \
-            name='match_finished_scoring_center'),
-    url(r'^finished_scoring_match/$', 'finished_scoring_match', \
-            name='match_finished_scoring_match'),
-    url(r'^check_scorer_status/$', 'check_scorer_status', \
-            name='match_check_scorer_status'),
     url(r'^batch_actions/$', 'batch_actions', name='match_batch_actions'),
 
     # Scorekeeper Controller

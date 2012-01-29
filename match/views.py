@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from models import *
 from utils.time import get_microseconds
-from scoring.views import scorekeeper
+from scoring.views import scorekeeper, get_scorer_data # This is not a relative import
 from match.tower_state import *
 
 try: import simplejson as json
@@ -79,9 +79,51 @@ def score_match_event(user, match, tower, key, data):
         me.save()
         update_from_match_event(me)
 
+def finish_scoring_center(scoring_device):
+    if scoring_device.on_center:
+        scoring_device.on_center = False
+        scoring_device.save()
+
+def finish_scoring_match(scoring_device, match):
+    tower_name = scoring_device.tower.name
+    setattr(match, 'scorer_' + tower_name + '_confirmed', True)
+    match.save()
+
+def state_update(data):
+    if data['state'] == 'no_match': return data
+
+    data['match_number'] = 0
+    try:
+        match = ScoringSystem.objects.all()[0].current_match
+        data['match_number'] = str(match.id)
+    except:
+        data['state'] = 'no_match'
+        return data
+
+    if not match.actual_start:  data['state'] = 'prematch'
+    else:
+        timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
+        if timer.days < 0:
+            if getattr(match, 'scorer_' + data['tower_name'] + '_confirmed'):
+                data['state'] = 'match_done_confirmed'
+            else:
+                data['state'] = 'match_done_not_confirmed'
+
+    if data['state']: return data
+
+    center_start = getattr(match, data['tower_name'].split('_')[1] + '_center_active_start')
+    try:
+        diff = (center_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
+        if diff.days < 0: data['state'] = 'normal'
+        else: data['state'] = 'center'
+    except: data['state'] = 'normal'
+    return data
+
 @staff_member_required
 def batch_actions(request):
     scoring_device = ScoringDevice.objects.get(scorer=request.user)
+    scoring_device.last_contact = datetime.datetime.now()
+    scoring_device.save()
     match = ScoringSystem.objects.all()[0].current_match
     if scoring_device.on_center:
         tower = Tower.objects.get(name='center')
@@ -95,73 +137,22 @@ def batch_actions(request):
 
     for key in keys:
         data = actions[key]['data']
-        if actions[key]['action'] == 'score':
+        action = actions[key]['action']
+        if action == 'score':
             score_match_event(request.user, match, tower, key, data)
-#        elif actions[key]['action'] == ' done_scoring_center?
+        elif action == 'done_scoring_center':
+            finish_scoring_center(scoring_device)
+        elif action == 'done_scoring_match':
+            finish_scoring_match(scoring_device, match)
         else: continue
         saved_actions.append(key)
 
-    return HttpResponse(json.dumps({'success': True, 'action_ids':saved_actions}), 'application/json')
+    scorer_data = get_scorer_data(scoring_device)
+    scorer_data = state_update(scorer_data)
 
-@staff_member_required
-def finished_scoring_center(request):
-
-    scoring_device = ScoringDevice.objects.get(scorer=request.user)
-    if scoring_device.on_center:
-        scoring_device.on_center = False
-        scoring_device.save()
-    return HttpResponse(json.dumps({'success': True}), 'application/json')
-
-@staff_member_required
-def finished_scoring_match(request):
-    scoring_device = ScoringDevice.objects.get(scorer=request.user)
-    tower_name = scoring_device.tower.name
-    match = ScoringSystem.objects.all()[0].current_match
-    if   tower_name == 'low_red':    match.scorer_low_red_confirmed = True
-    elif tower_name == 'high_red':   match.scorer_high_red_confirmed = True
-    elif tower_name == 'low_blue':   match.scorer_low_blue_confirmed = True
-    elif tower_name == 'high_blue':  match.scorer_high_blue_confirmed = True
-    match.save()
-    return HttpResponse(json.dumps({'success': True}), 'application/json')
-
-@staff_member_required
-def check_scorer_status(request):
-    scoring_device = ScoringDevice.objects.get(scorer=request.user)
-    scoring_device.last_contact = datetime.datetime.now()
-    scoring_device.save()
-    try: tower_name = scoring_device.tower.name
-    except:
-        return HttpResponse(json.dumps({'current_state':'no_match','current_match':''}),'application/json')
-    current_state, current_match = '', ''
-    try:
-        match = ScoringSystem.objects.all()[0].current_match
-        current_match = str(match.id)
-        if not match.actual_start:
-            current_state = 'prematch'
-        else:
-            timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
-            if timer.days < 0:
-                if   tower_name == 'low_red':   confirmed = match.scorer_low_red_confirmed
-                elif tower_name == 'high_red':  confirmed = match.scorer_high_red_confirmed
-                elif tower_name == 'low_blue':  confirmed = match.scorer_low_blue_confirmed
-                elif tower_name == 'high_blue': confirmed = match.scorer_high_blue_confirmed
-                if confirmed:
-                    current_state = 'match_done_confirmed'
-                else:
-                    current_state = 'match_done_not_confirmed'
-    except: current_state, current_match = 'no_match', ''
-    if not current_state:
-        if '_red' in tower_name:
-            center_start = match.red_center_active_start
-        else:
-            center_start = match.blue_center_active_start
-        try:
-            diff = (center_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
-            if diff.days < 0: current_state = 'normal'
-            else: current_state = 'center'
-        except: current_state = 'normal'
-    return HttpResponse(json.dumps({'current_state': current_state,  \
-            'current_match':current_match}), 'application/json')
+    return HttpResponse(json.dumps({
+            'success': True, 'action_ids':saved_actions, 'scorer_data': scorer_data,
+        }), 'application/json')
 
 
 # Scorekeeper Functions

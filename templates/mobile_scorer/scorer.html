@@ -10,7 +10,7 @@
 
         <div class="title-bar">
             <div class="vcenter">
-                <span id="controler_name">{% if is_red %}Red{% else %}Blue{% endif %} 
+                <span id="controller_name">{% if is_red %}Red{% else %}Blue{% endif %} 
                     {% if is_low %}Short{% else %}Tall{% endif %}</span>
                 Controller Match 
                 <span class="match_number">x</span>
@@ -33,26 +33,26 @@
             <div class="normal-state state {% if is_low %}halves{% else %}thirds{% endif %}" style="display: none;">
 
                 <div class="left_scoring_col scoring_col">
-                    <div class="scoring_cell level_3 {{ non_primary }}">
+                    <div class="scoring_cell level_3 {% if is_red %}blue{% else %}red{% endif %}">
                         <div class="vcenter">AV</div>
                     </div>
-                    <div class="scoring_cell level_2 {{ non_primary }}"
+                    <div class="scoring_cell level_2 {% if is_red %}blue{% else %}red{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>
                         <div class="vcenter">High GV</div>
                     </div>
-                    <div class="scoring_cell level_1 {{ non_primary }}">
+                    <div class="scoring_cell level_1 {% if is_red %}blue{% else %}red{% endif %}">
                         <div class="vcenter">Low GV</div>
                     </div>
                 </div>
                 <div class="right_scoring_col scoring_col">
-                    <div class="scoring_cell level_3 {{ primary }}">
+                    <div class="scoring_cell level_3 {% if is_red %}red{% else %}blue{% endif %}">
                         <div class="vcenter">AV</div>
                     </div>
-                    <div class="scoring_cell level_2 {{ primary }}"
+                    <div class="scoring_cell level_2 {% if is_red %}red{% else %}blue{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>
                         <div class="vcenter">High GV</div>
                     </div>
-                    <div class="scoring_cell level_1 {{ primary }}">
+                    <div class="scoring_cell level_1 {% if is_red %}red{% else %}blue{% endif %}">
                         <div class="vcenter">Low GV</div>
                     </div>
                 </div>

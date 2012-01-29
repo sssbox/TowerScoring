@@ -14,11 +14,14 @@ function do_ajax() {
                 {
                     if (data.action_ids)
                         actions.dequeue_successful_actions(data.action_ids) ;
+                    device_state.update(data.scorer_data) ;
                     if (typeof(callback) == 'function') 
                         callback() ;
                     ajax_in_process = false ;
                     if(Object.keys(actions.queue).length > 0)
                         do_ajax() ;
+                    else
+                        setTimeout(do_ajax, 500);
                 }
             },
             cache: false
@@ -32,6 +35,7 @@ var actions = {
     init: function(){
 //        actions.next_id =
 //        actions.queue =
+        do_ajax() ;
     },
     update_local_store: function(){
 // save actions.queue and actions.next_id

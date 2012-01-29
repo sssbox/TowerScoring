@@ -1,4 +1,6 @@
 <script type="text/javascript">
+
+    {% include "mobile_scorer/device_state.js" %}
     {% include "mobile_scorer/action_queue.js" %}
 
     $('.scoring_cell').click(function(e){
@@ -17,105 +19,12 @@
     var current_state = '' ;
     $('#return_to_normal_link').click(function(e){
         e.preventDefault();
-        $.ajax({
-            url: "{% url match_finished_scoring_center %}",
-            type: "GET",
-            cache: false,
-            success: function(data){
-                if(data.success==true)
-                {
-                    $("div.return-to-normal").hide() ;
-                    $("div.state").hide() ;
-                    $("div.normal-state").show() ;
-                    current_state = 'normal' ;
-                }
-            }
-        });
+        actions.push('done_scoring_center', {}, true) ;
     });
     $('#confirm_match_link').click(function(e){
         e.preventDefault();
-        $.ajax({
-            url: "{% url match_finished_scoring_match %}",
-            type: "GET",
-            cache: false,
-            success: function(data){
-                if(data.success==true)
-                {
-                    $("div.confirm-match-score").hide() ;
-                    $("div.state").hide() ;
-                    $("div.match-done-confirmed-state").show() ;
-                    current_state = 'match_done_confirmed' ;
-                }
-            }
-        });
+        actions.push('done_scoring_match', {}, true) ;
     });
-    function check_status()
-    {
-        $.ajax({
-            url: "{% url match_check_scorer_status %}",
-            cache: false,
-            timeout: 1000,
-            success: function(data){
-                setTimeout(check_status, 500) ;
-                $('span.match_number').html(data.current_match) ;
-                if(current_state == 'no_match_reload' && data.current_state != 'no_match')
-                {
-                    location.reload() ;
-                }
-                if((data.current_state == 'normal' || data.current_state == 'match_done_not_confirmed')
-                        && current_state != 'normal' && current_state != 'center')
-                {
-                    $("div.state").hide() ;
-                    $("div.normal-state").show() ;
-                    if(data.current_state != 'match_done_not_confirmed')
-                        $("div.confirm-match-score").hide() ;
-                    current_state = 'normal' ;
-                }
-                if(data.current_state == 'center' && current_state != 'center')
-                {
-                    $("div.state").hide() ;
-                    $("div.return-to-normal").hide() ;
-                    $("div.confirm-match-score").hide() ;
-                    $("div.center-state").show() ;
-                    current_state = 'center' ;
-                }
-                if(data.current_state == 'match_done_confirmed' && current_state != 'match_done_confirmed')
-                {
-                    $("div.state").hide() ;
-                    $("div.match-done-confirmed-state").show() ;
-                    current_state = 'match_done_confirmed' ;
-                }
-                if(data.current_state == 'prematch' && current_state != 'prematch')
-                {
-                    $("div.state").hide() ;
-                    $("div.prematch-state").show() ;
-                    current_state = 'prematch' ;
-                }
-                if(data.current_state == 'no_match' && (current_state != 'no_match' && current_state != 'no_match_reload'))
-                {
-                    $("div.state").hide() ;
-                    $("div.no-match-state").show() ;
-                    current_state = 'no_match' ;
-                }
-                if(data.current_state != 'center' && current_state == 'center')
-                {
-                    $("div.initial-state").hide() ;
-                    $("div.return-to-normal").show() ;
-                }
-                if(data.current_state == 'match_done_not_confirmed' && current_state != 'match_done_not_confirmed')
-                {
-                    $("div.initial-state").hide() ;
-                    $("div.confirm-match-score").show() ;
-                }
-            }
-        });
-    }
-    check_status();
-    {% if no_match %}
-        $("div.state").hide() ;
-        $("div.no-match-state").show() ;
-        current_state = 'no_match_reload' ;
-    {% endif %}
     
 
     $( document ).ready( function() {

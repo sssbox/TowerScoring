@@ -22,6 +22,15 @@ def index(request):
     return scorer(request)
     return render_to_response('index.html', locals())
 
+def get_scorer_data(scoring_device):
+    data = {'state': '', 'is_red': '', 'is_low': '', 'primary':'', 'non_primary':''}
+    try:
+        data['tower_name'] = scoring_device.tower.name
+        data['is_red'] = '_red' in data['tower_name']
+        data['is_low'] = 'low_' in data['tower_name']
+    except: data['state'] = 'no_match'
+    return data
+
 @staff_member_required
 def scorer(request):
     try:
@@ -30,19 +39,16 @@ def scorer(request):
         return HttpResponse('Error, you are not set up as a scorer, contact the scorekeeper', \
                 "text/plain")
 
-    try:
-        is_red = '_red' in scoring_device.tower.name
-        is_low = 'low_' in scoring_device.tower.name
-        if is_red:
-            primary = 'red'
-            non_primary = 'blue'
-        else:
-            primary = 'blue'
-            non_primary = 'red'
-    except: no_match = True
     try: next_id = MatchEvent.objects.filter(scorer=request.user).order_by('-collision_id')[0].collision_id + 1
     except: next_id = 1
-    return render_to_response('mobile_scorer/scorer.html', locals())
+
+    data = get_scorer_data(scoring_device)
+
+    locs = locals()
+    locs.update(data)
+    del locs['data']
+    locs['no_match'] = locs['state'] == 'no_match'
+    return render_to_response('mobile_scorer/scorer.html', locs)
 
 @staff_member_required
 def timer(request, get_dict=False):
