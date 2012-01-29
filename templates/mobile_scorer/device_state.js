@@ -13,7 +13,6 @@ var device_state = {
         $("span.match_number").text(device_state.match_number) ;
     },
     update_tower: function(){
-        // TODO change layout of tower
         if(device_state.is_low) {
             $("div.controller-area div.normal-state").removeClass('thirds').addClass('halves') ;
             $("div.scoring_cell.level_2").hide() ;

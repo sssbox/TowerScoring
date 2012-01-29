@@ -5,6 +5,10 @@ img { border: none; }
 
 .cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
 
+.error-message-holder { position: fixed; top: 0px; left: 0px; width: 100%; height: 10%; background-color:#f00; z-index: 4000; cursor:pointer; }
+.error-dismiss { position: absolute; bottom: 0px; right: 1%; font-size: 60%; }
+.error-timer { position: absolute; bottom: 0px; left: 1%; font-size: 60%; }
+.error-message { font-size: 75% ; margin-top: 2% ;}
 
 .red { background: #f55; }
 .blue { background: #55f; }
@@ -19,7 +23,7 @@ img { border: none; }
 
 .state { width: 100%; height:100%; margin: auto; }
 
-.scoring_col { float: left;  height:100%; width: 50% ; margin:auto;}
+.scoring_col { float: left;  height:100%; width: 50% ; margin:auto; cursor:pointer;}
 
 .thirds .scoring_cell { height: 33% ; }
 .halves .scoring_cell { height: 50% ; }

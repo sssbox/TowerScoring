@@ -1,5 +1,32 @@
 <script type="text/javascript">
 
+    var error_displayed = false ;
+    var error_count = 0 ;
+    var last_valid_request = Math.round(new Date().getTime() / 10) ;
+    function update_error_timing()
+    {
+        if (error_displayed)
+        {
+            var time_since_valid = Math.round(new Date().getTime() / 10) - last_valid_request ;
+            time_since_valid = time_since_valid/100 ;
+            $(".error-timer").text('' + time_since_valid + ' seconds since last valid request') ;
+        }
+    }
+    setInterval(update_error_timing, 500) ;
+    function display_error(message)
+    {
+        error_displayed = true ;
+        error_count += 1 ;
+        $(".error-message").text(message + ' ' + error_count + ' times') ;
+        $(".error-message-holder").slideDown(200) ;
+    }
+    $(".error-message-holder").click(function(e){
+        e.preventDefault() ;
+        error_displayed = false ;
+        error_count = 0 ;
+        $(".error-message-holder").slideUp(200) ;
+    }) ;
+
     {% include "mobile_scorer/device_state.js" %}
     {% include "mobile_scorer/action_queue.js" %}
 
