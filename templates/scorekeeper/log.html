@@ -10,7 +10,7 @@
             {{ event.alliance|title }}
         </span>
         <span class="float match_event_unscored">
-            &nbsp;{% if event.undo_score %}removed{% else %}scored{% endif %}&nbsp;
+            &nbsp;{% if event.undo_score %}removed{% else %}{% if event.tower.name == 'center' or event.alliance in event.tower.name %}scored{% else %}descored{% endif %}{% endif %}&nbsp;
         </span>
         <span class="float match_event_level">
             {% if event.level == 1 %}Low GV{% else %}

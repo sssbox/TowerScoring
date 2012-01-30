@@ -131,15 +131,17 @@
                 al.html('Blue') ;
                 al.addClass('light-blue') ;
             }
+            var tower_name = String(match_event.tower.name) ;
             if(match_event.undo_score)
                 c.find('.match_event_unscored').html('&nbsp;removed&nbsp;') ;
+            else if (tower_name != 'center' && tower_name.indexOf(match_event.alliance) < 0)
+                c.find('.match_event_unscored').html('&nbsp;descored&nbsp;') ;
             if(match_event.level == 1)
                 c.find('.match_event_level').html("Low GV") ;
             else if(match_event.level == 2)
                 c.find('.match_event_level').html("High GV") ;
             else if(match_event.level == 3)
                 c.find('.match_event_level').html("AV") ;
-            var tower_name = String(match_event.tower.name) ;
             if(tower_name.indexOf('high_') > -1)
                 c.find('.match_event_tower_1').html("High") ;
             else if(tower_name.indexOf('low_') > -1)
