@@ -33,7 +33,7 @@ function do_ajax() {
                     display_error('Invalid JSON returned.') ;
                 else if (e === 'timeout')
                     display_error('Timed out.') ;
-                else if (e === 'abort')
+                else if (e === 'abort')
                     display_error('Ajax request aborted.');
                 else if (x.status == 0)
                     display_error('Lost connection.') ;
@@ -46,13 +46,13 @@ function do_ajax() {
                         else if (x.status == 500)
                             display_error('Internal server error.') ;
                         else
-                            display_error('Unknown Error: ' + x.responseText) ;
+                            display_error('Unknown Error: ' + x.responseText) ;
                     } catch(whatever) {
-                        display_error('Exception printing unknown error.') ;
+                        display_error('Exception printing unknown error.') ;
                     }
                 }
-                else
-                    display_error('Exception printing unknown error.') ;
+                else
+                    display_error('Exception printing unknown error.') ;
                 ajax_in_process = false ;
                 timeout = setTimeout(do_ajax, 500);
 
