@@ -24,7 +24,7 @@ def update_from_match_event(me):
     if '_' in tower.name: # low or high alliance tower
         if alliance in tower.name: # alliance scoring in own goal
             tl_1 = tower.towerlevel_set.get(level=1)
-            if str(level) == str(1) or tl_1.state != alliance:
+            if str(level) == str(1) or tl_1.state != alliance or 'low_' in tower.name:
                 tl = tl_1
             else:
                 tl = tower.towerlevel_set.get(level=2)
@@ -63,19 +63,26 @@ def update_from_match_event(me):
         else: # alliance attempting to descore
             pass # TODO
     elif 'center' in tower.name: # scoring on center tower
+        s = SCORE_SETTINGS[level]
+        if me.undo_score: s = 0 - s
         if alliance == 'red':
-            match.red_score += SCORE_SETTINGS[level]
-            match.red_score_pre_penalty += SCORE_SETTINGS[level]
+            match.red_score += s
+            match.red_score_pre_penalty += s
         else:
-            match.blue_score += SCORE_SETTINGS[level]
-            match.blue_score_pre_penalty += SCORE_SETTINGS[level]
+            match.blue_score += s
+            match.blue_score_pre_penalty += s
     match.save()
 
 def score_match_event(user, match, tower, key, data):
+    print
+    print
+    print data
+    print
+    print
     if not MatchEvent.objects.filter(scorer=user, collision_id=key).exists():
         me = MatchEvent(match=match, microseconds=get_microseconds(), \
             scorer=user, tower=tower, alliance=data['alliance'], \
-            level=int(data['level']), collision_id=key)
+            level=int(data['level']), collision_id=key, undo_score=data['undo_score'])
         me.save()
         update_from_match_event(me)
 
@@ -89,7 +96,7 @@ def finish_scoring_match(scoring_device, match):
     setattr(match, 'scorer_' + tower_name + '_confirmed', True)
     match.save()
 
-def state_update(data):
+def state_update(data, scoring_device):
     if data['state'] == 'no_match': return data
 
     data['match_number'] = 0
@@ -100,7 +107,9 @@ def state_update(data):
         data['state'] = 'no_match'
         return data
 
-    if not match.actual_start:  data['state'] = 'prematch'
+    if not match.actual_start:
+        data['state'] = 'prematch'
+        return data
     else:
         timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
         if timer.days < 0:
@@ -109,12 +118,16 @@ def state_update(data):
             else:
                 data['state'] = 'match_done_not_confirmed'
 
-    if data['state']: return data
+    if data['state'] and not scoring_device.on_center: return data
+
+    if not scoring_device.on_center:
+        data['state'] = 'normal'
+        return data
 
     center_start = getattr(match, data['tower_name'].split('_')[1] + '_center_active_start')
     try:
         diff = (center_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
-        if diff.days < 0: data['state'] = 'normal'
+        if diff.days < 0: data['state'] = 'normal_center_not_confirmed'
         else: data['state'] = 'center'
     except: data['state'] = 'normal'
     return data
@@ -148,7 +161,7 @@ def batch_actions(request):
         saved_actions.append(key)
 
     scorer_data = get_scorer_data(scoring_device)
-    scorer_data = state_update(scorer_data)
+    scorer_data = state_update(scorer_data, scoring_device)
 
     return HttpResponse(json.dumps({
             'success': True, 'action_ids':saved_actions, 'scorer_data': scorer_data,

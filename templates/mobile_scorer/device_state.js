@@ -15,17 +15,27 @@ var device_state = {
     update_tower: function(){
         if(device_state.is_low) {
             $("div.controller-area div.normal-state").removeClass('thirds').addClass('halves') ;
-            $("div.scoring_cell.level_2").hide() ;
+            $("div.controller-area div.center-state").removeClass('whole').addClass('halves') ;
+            $("div.hide_for_low").hide() ;
+            $("div.hide_for_high").show() ;
         } else {
             $("div.controller-area div.normal-state").removeClass('halves').addClass('thirds') ;
-            $("div.scoring_cell.level_2").show() ;
+            $("div.controller-area div.center-state").removeClass('halves').addClass('whole') ;
+            $("div.hide_for_low").show() ;
+            $("div.hide_for_high").hide() ;
         }
         if(device_state.is_red) {
-            $("div.left_scoring_col div.scoring_cell").removeClass('red').addClass('blue') ;
-            $("div.right_scoring_col div.scoring_cell").removeClass('blue').addClass('red') ;
+            $("div.center-state div.scoring_cell").removeClass('blue').addClass('red') ;
+            $("div.normal-state div.left_scoring_col div.scoring_cell")
+                .removeClass('red').addClass('blue') ;
+            $("div.normal-state div.right_scoring_col div.scoring_cell")
+                .removeClass('blue').addClass('red') ;
         } else {
-            $("div.left_scoring_col div.scoring_cell").removeClass('blue').addClass('red') ;
-            $("div.right_scoring_col div.scoring_cell").removeClass('red').addClass('blue') ;
+            $("div.center-state div.scoring_cell").removeClass('red').addClass('blue') ;
+            $("div.normal-state div.left_scoring_col div.scoring_cell")
+                .removeClass('blue').addClass('red') ;
+            $("div.normal-state div.right_scoring_col div.scoring_cell")
+                .removeClass('red').addClass('blue') ;
         }
         device_state.update_title() ;
     },
@@ -49,7 +59,7 @@ var device_state = {
             $("div.confirm-match-score").show() ;
             device_state.current_state = 'match_done_not_confirmed' ; 
         }
-        else if(device_state.server_state == 'center')
+        else if(device_state.server_state == 'center' )
         {
             $("div.state").hide() ;
             $("div.return-to-normal").hide() ;
@@ -76,9 +86,16 @@ var device_state = {
             $("div.no-match-state").show() ;
             device_state.current_state = 'no_match' ;
         }
-        if(device_state.server_state != 'center' && device_state.current_state == 'center')
+        if(device_state.server_state == 'normal_center_not_confirmed')
         {
+            $("div.confirm-match-score").hide() ;
             $("div.return-to-normal").show() ;
+            if(device_state.current_state != 'center')
+            {
+                $("div.state").hide() ;
+                $("div.center-state").show() ;
+            }
+            device_state.current_state = 'normal_center_not_confirmed' ;
         }
     },
     update: function(data){

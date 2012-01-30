@@ -174,6 +174,7 @@ class MatchEvent(models.Model):
     LEVEL_CHOICES=((1, 'Low GV'),(2, 'High GV'),(3, 'AV'))
     level = models.IntegerField(choices=LEVEL_CHOICES)
     collision_id = models.IntegerField()
+    undo_score = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('scorer', 'collision_id')

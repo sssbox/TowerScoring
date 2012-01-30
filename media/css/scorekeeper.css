@@ -24,6 +24,7 @@ div { margin-bottom: 10px; }
 /* .match_event { margin-top: 1% ; } */
 .match_event_scorer { width: 20% ; }
 .match_event_alliance { width: 8% ; }
+.match_event_unscored { width: 16% ; }
 .match_event_level { width: 15% ; }
 .match_event_tower_1 { width: 8% ; }
 .match_event_tower_2 { width: 8% ; }

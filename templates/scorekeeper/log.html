@@ -9,7 +9,9 @@
         <span class="float match_event_alliance light-{% if 'red' == event.alliance %}red{% else %}blue{% endif %}">
             {{ event.alliance|title }}
         </span>
-        <span class="float">&nbsp;scored&nbsp;</span>
+        <span class="float match_event_unscored">
+            &nbsp;{% if event.undo_score %}removed{% else %}scored{% endif %}&nbsp;
+        </span>
         <span class="float match_event_level">
             {% if event.level == 1 %}Low GV{% else %}
             {% if event.level == 2 %}High GV{% else %}
@@ -39,7 +41,7 @@
     <div class="match_event" id="match_event_template" style="display:none;">
         <span class="float match_event_scorer"></span>
         <span class="float match_event_alliance"></span>
-        <span class="float">&nbsp;scored&nbsp;</span>
+        <span class="float match_event_unscored">&nbsp;scored&nbsp;</span>
         <span class="float match_event_level"></span>
         <span class="float"> on&nbsp;</span>
         <span class="float match_event_tower_1"></span>

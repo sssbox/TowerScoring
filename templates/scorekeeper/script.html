@@ -131,6 +131,8 @@
                 al.html('Blue') ;
                 al.addClass('light-blue') ;
             }
+            if(match_event.undo_score)
+                c.find('.match_event_unscored').html('&nbsp;removed&nbsp;') ;
             if(match_event.level == 1)
                 c.find('.match_event_level').html("Low GV") ;
             else if(match_event.level == 2)

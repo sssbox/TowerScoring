@@ -24,7 +24,7 @@ function do_ajax() {
                     if(Object.keys(actions.queue).length > 0)
                         do_ajax() ;
                     else
-                        timeout = setTimeout(do_ajax, 2000);
+                        timeout = setTimeout(do_ajax, 500);
                     last_valid_request = Math.round(new Date().getTime() / 10) ;
                 }
             },
@@ -54,7 +54,7 @@ function do_ajax() {
                 else
                     display_error('Exception printing unknown error.') ;
                 ajax_in_process = false ;
-                timeout = setTimeout(do_ajax, 2000);
+                timeout = setTimeout(do_ajax, 500);
 
             },
             cache: false

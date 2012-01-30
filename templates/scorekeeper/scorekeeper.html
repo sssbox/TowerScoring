@@ -7,7 +7,7 @@
 {% block entire_body %}
 <div class="all">
     <div class="float ninth"> 
-        {% with tc=towers.high_blue name="High Blue" machine_name="high_blue" %}
+        {% with tc=towers.low_red name="Low Red" machine_name="low_red" %}
         {% include "scorekeeper/tower.html" %}
         {% endwith %}
     </div>
@@ -15,7 +15,7 @@
         {% include "scorekeeper/match.html" %}
     </div>
     <div class="float ninth"> 
-        {% with tc=towers.high_red name="High Red" machine_name="high_red" %}
+        {% with tc=towers.low_blue name="Low Blue" machine_name="low_blue" %}
         {% include "scorekeeper/tower.html" %}
         {% endwith %}
     </div>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="float ninth"> 
-        {% with tc=towers.low_red name="Low Red" machine_name="low_red" %}
+        {% with tc=towers.high_blue name="High Blue" machine_name="high_blue" %}
         {% include "scorekeeper/tower.html" %}
         {% endwith %}
     </div>
@@ -43,7 +43,7 @@
         {% include "scorekeeper/log.html" %}
     </div>
     <div class="float ninth"> 
-        {% with tc=towers.low_blue name="Low Blue" machine_name="low_blue" %}
+        {% with tc=towers.high_red name="High Red" machine_name="high_red" %}
         {% include "scorekeeper/tower.html" %}
         {% endwith %}
     </div>
