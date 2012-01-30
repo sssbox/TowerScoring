@@ -132,6 +132,8 @@
                 al.addClass('light-blue') ;
             }
             var tower_name = String(match_event.tower.name) ;
+            if(match_event.dud)
+                c.find('.greyable').addClass('greyed') ;
             if(match_event.undo_score)
                 c.find('.match_event_unscored').html('&nbsp;removed&nbsp;') ;
             else if (tower_name != 'center' && tower_name.indexOf(match_event.alliance) < 0)

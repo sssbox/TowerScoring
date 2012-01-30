@@ -175,6 +175,7 @@ class MatchEvent(models.Model):
     level = models.IntegerField(choices=LEVEL_CHOICES)
     collision_id = models.IntegerField()
     undo_score = models.BooleanField(default=False)
+    dud = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('scorer', 'collision_id')

@@ -28,7 +28,10 @@ def update_from_match_event(me):
                 tl = tl_1
             else:
                 tl = tower.towerlevel_set.get(level=2)
-            if tl.state != alliance and tl.state != 'off': # It is scorable
+            if tl.state == alliance or tl.state == 'off':
+                me.dud = True
+                me.save()
+            else: # It is scorable
                 tl.state = alliance
                 tl.save()
                 alliance_towers = TowerLevel.objects.filter(tower__name__contains='_'+alliance)
@@ -38,6 +41,7 @@ def update_from_match_event(me):
                         and ((alliance == 'blue' and not match.blue_center_active) \
                                 or (alliance == 'red' and not match.red_center_active)):
 #TODO if other timer is running and there is < 5 seconds left, set cur to other_time+5
+#TODO if the match is nearing the end set timer to match timer?
                     if alliance == 'blue':
                         match.blue_center_active = True
                         match.blue_center_active_start = datetime.datetime.now()
@@ -61,7 +65,30 @@ def update_from_match_event(me):
                     match.blue_score += SCORE_SETTINGS[level]
                     match.blue_score_pre_penalty += SCORE_SETTINGS[level]
         else: # alliance attempting to descore
-            pass # TODO
+            descoring_alliance = alliance
+            if descoring_alliance == 'red': descored_alliance = 'blue'
+            else: descored_alliance = 'red'
+
+            try:
+                tl_2 = tower.towerlevel_set.get(level=2)
+            except:
+                tl = tower.towerlevel_set.get(level=1)
+                tl_2 = False
+            else:
+                if int(level) == 1 or tl_2.state != descored_alliance or 'low_' in tower.name:
+                    tl = tower.towerlevel_set.get(level=1)
+                else:
+                    tl = tl_2
+
+            if tl.state == descored_alliance and not \
+                    (tl.level == 1 and tl_2 and tl_2.state == descored_alliance):
+                tl.state = 'green'
+                tl.save()
+            else:
+                me.dud = True
+                me.save()
+
+
     elif 'center' in tower.name: # scoring on center tower
         s = SCORE_SETTINGS[level]
         if me.undo_score: s = 0 - s
@@ -74,11 +101,6 @@ def update_from_match_event(me):
     match.save()
 
 def score_match_event(user, match, tower, key, data):
-    print
-    print
-    print data
-    print
-    print
     if not MatchEvent.objects.filter(scorer=user, collision_id=key).exists():
         me = MatchEvent(match=match, microseconds=get_microseconds(), \
             scorer=user, tower=tower, alliance=data['alliance'], \

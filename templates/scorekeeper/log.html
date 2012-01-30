@@ -5,21 +5,21 @@
 <div id="event_log">
     {% for event in match.matchevent_set.all %}
     <div class="match_event">
-        <span class="float match_event_scorer">{{ event.scorer.username }}</span>
+        <span class="float match_event_scorer greyable{% if event.dud %} greyed{% endif %}">{{ event.scorer.username }}</span>
         <span class="float match_event_alliance light-{% if 'red' == event.alliance %}red{% else %}blue{% endif %}">
             {{ event.alliance|title }}
         </span>
-        <span class="float match_event_unscored">
+        <span class="float match_event_unscored greyable{% if event.dud %} greyed{% endif %}">
             &nbsp;{% if event.undo_score %}removed{% else %}{% if event.tower.name == 'center' or event.alliance in event.tower.name %}scored{% else %}descored{% endif %}{% endif %}&nbsp;
         </span>
-        <span class="float match_event_level">
+        <span class="float match_event_level greyable{% if event.dud %} greyed{% endif %}">
             {% if event.level == 1 %}Low GV{% else %}
             {% if event.level == 2 %}High GV{% else %}
             {% if event.level == 3 %}AV{% endif %}
             {% endif %}{% endif %}
         </span>
-        <span class="float"> on&nbsp;</span>
-        <span class="float match_event_tower_1">
+        <span class="float greyable{% if event.dud %} greyed{% endif %}"> on&nbsp;</span>
+        <span class="float match_event_tower_1 greyable{% if event.dud %} greyed{% endif %}">
             {% if 'high_' in event.tower.name %}High{% else %}
             {% if 'low_' in event.tower.name %}Low{% else %}Center{% endif %}
             {% endif %}
@@ -29,8 +29,8 @@
                 {% if '_red' in event.tower.name %}Red{% else %}Blue{% endif %}
             {% else %}&nbsp;{% endif %}
         </span>
-        <span class="float">&nbsp;&nbsp;</span>
-        <span class="float match_event_delete">
+        <span class="float greyable{% if event.dud %} greyed{% endif %}">&nbsp;&nbsp;</span>
+        <span class="float match_event_delete greyable{% if event.dud %} greyed{% endif %}">
             <a href="#" name="{{ event.id }}" class="delete_event_link">Delete</a>
         </span>
     </div>
@@ -39,15 +39,15 @@
 </div> 
     
     <div class="match_event" id="match_event_template" style="display:none;">
-        <span class="float match_event_scorer"></span>
+        <span class="float match_event_scorer greyable"></span>
         <span class="float match_event_alliance"></span>
-        <span class="float match_event_unscored">&nbsp;scored&nbsp;</span>
-        <span class="float match_event_level"></span>
-        <span class="float"> on&nbsp;</span>
-        <span class="float match_event_tower_1"></span>
+        <span class="float match_event_unscored greyable">&nbsp;scored&nbsp;</span>
+        <span class="float match_event_level greyable"></span>
+        <span class="float greyable"> on&nbsp;</span>
+        <span class="float match_event_tower_1 greyable"></span>
         <span class="float match_event_tower_2"></span>
-        <span class="float">&nbsp;&nbsp;</span>
-        <span class="float match_event_delete">
+        <span class="float greyable">&nbsp;&nbsp;</span>
+        <span class="float match_event_delete greyable">
             <a href="#" class="delete_event_link">Delete</a>
         </span>
     </div>

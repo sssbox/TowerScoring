@@ -13,6 +13,7 @@ div { margin-bottom: 10px; }
 .light-red { background: #f55; }
 .light-blue { background: #55f; }
 .green { background: #0f0; }
+.greyed { background: #aaa; }
 
 .all { width: 100%; height: 100%; margin: auto;}
 .ninth { width: 31%; height: 30%; margin: 1%; }
