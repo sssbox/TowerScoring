@@ -32,7 +32,12 @@
                 $("span.confirmed_"+tower).addClass('red');
                 $("span.confirmed_"+tower).removeClass('green');
             }
-            $('span.last_contact_'+tower).html(data.towers[tower].last_contact) ;
+            if(data.towers[tower].last_contact != '1s' && data.towers[tower].last_contact != '')
+                $('span.last_contact_'+tower).addClass('light-red').removeClass('light-green')
+                    .html(data.towers[tower].last_contact) ;
+            else
+                $('span.last_contact_'+tower).addClass('light-green').removeClass('light-red')
+                    .html('now') ;
             $('span.last_event_'+tower).html(data.towers[tower].last_event) ;
         }
         if(action == 'match_change' || action == 'select_scorer')

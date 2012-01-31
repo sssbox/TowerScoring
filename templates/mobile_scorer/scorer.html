@@ -78,43 +78,67 @@
             <div class="center-state state {% if is_low %}halves{% else %}whole{% endif %}" style="display: none;">
 
                 <div class="{% if scoring_device.is_lefty %}dominant_scoring_col{% else %}non_dominant_scoring_col{% endif %} left_scoring_col scoring_col">
-                    <div class="scoring_cell undo_score level_3 hide_for_low 
+                    <div class="scoring_cell level_3 hide_for_low 
+                        {% if not scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter">- AV</div>
+                        <div class="vcenter">
+                            {% if scoring_device.is_lefty %}+{% else %}-{% endif %} AV
+                        </div>
                     </div>
-                    <div class="scoring_cell undo_score level_2 hide_for_high
+                    <div class="scoring_cell level_2 hide_for_high
+                        {% if not scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if not is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter"><br />- High GV</div>
+                        <div class="vcenter">
+                            <br />{% if scoring_device.is_lefty %}+{% else %}-{% endif %}
+                            High GV
+                        </div>
                     </div>
-                    <div class="scoring_cell undo_score level_1 hide_for_high
+                    <div class="scoring_cell level_1 hide_for_high
+                        {% if not scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if not is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter"><br />- Low GV</div>
+                        <div class="vcenter">
+                            <br />{% if scoring_device.is_lefty %}+{% else %}-{% endif %}
+                            Low GV
+                        </div>
                     </div>
                 </div>
                 <div class="{% if scoring_device.is_lefty %}non_dominant_scoring_col{% else %}dominant_scoring_col{% endif %} right_scoring_col scoring_col">
                     <div class="scoring_cell level_3 hide_for_low
+                        {% if scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter">+ AV</div>
+                        <div class="vcenter">
+                            {% if not scoring_device.is_lefty %}+{% else %}-{% endif %} AV
+                        </div>
                     </div>
                     <div class="score_count level_3 hide_for_low">
                         <div class="vcenter">0</div>
                     </div>
                     <div class="scoring_cell level_2 hide_for_high
+                        {% if scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if not is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter"><br />+ High GV</div>
+                        <div class="vcenter">
+                            <br />
+                            {% if not scoring_device.is_lefty %}+{% else %}-{% endif %}
+                            High GV
+                        </div>
                     </div>
                     <div class="score_count level_2 hide_for_high">
                         <div class="vcenter">0</div>
                     </div>
                     <div class="scoring_cell level_1 hide_for_high
+                        {% if scoring_device.is_lefty %}undo_score{% endif %}
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if not is_low %}style="display: none;"{% endif %}>
-                        <div class="vcenter"><br />+ Low GV</div>
+                        <div class="vcenter">
+                            <br />
+                            {% if not scoring_device.is_lefty %}+{% else %}-{% endif %}
+                            Low GV
+                        </div>
                     </div>
                     <div class="score_count level_1 hide_for_high">
                         <div class="vcenter">0</div>

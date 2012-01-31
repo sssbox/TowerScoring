@@ -10,9 +10,10 @@ div { margin-bottom: 10px; }
 
 .red { background: #f00; }
 .blue { background: #00f; }
+.green { background: #0f0; }
 .light-red { background: #f55; }
 .light-blue { background: #55f; }
-.green { background: #0f0; }
+.light-green { background: #5f5; }
 .greyed { background: #aaa; }
 
 .all { width: 100%; height: 100%; margin: auto;}
