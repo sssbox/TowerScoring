@@ -6,9 +6,9 @@
 
 {% block entire_body %}
 
-    <div class="all">
+    <div class="all default-all">
 
-        <div class="title-bar">
+        <div class="title-bar dt">
             <div class="error-message-holder" style="display:none;">
                 <div class="error-timer"></div>
                 <div class="error-message"></div>
@@ -19,6 +19,16 @@
                     {% if is_low %}Short{% else %}Tall{% endif %}</span>
                 Controller Match 
                 <span class="match_number">x</span>
+            </div>
+            <div id="confirmed_action" class="dt action-status green" style="display:none;">
+                <div class="vcenter">
+                    Confirmed!
+                </div>
+            </div>
+            <div id="cancelled_action" class="dt action-status red" style="display:none;">
+                <div class="vcenter">
+                    Cancelled!
+                </div>
             </div>
         </div>
 
@@ -38,7 +48,7 @@
             <div class="normal-state state {% if is_low %}halves{% else %}thirds{% endif %}" style="display: none;">
 
                 <div class="left_scoring_col scoring_col">
-                    <div class="scoring_cell level_3 {% if is_red %}blue{% else %}red{% endif %}">
+                    <div class="scoring_cell  level_3 {% if is_red %}blue{% else %}red{% endif %}">
                         <div class="vcenter">AV</div>
                     </div>
                     <div class="scoring_cell level_2 hide_for_low
@@ -114,7 +124,7 @@
         </div>
 
 
-        <div class="footer-bar">
+        <div class="footer-bar dt">
             <div class="normal-state state vcenter">
                 <div class="confirm-match-score" style="display:none;">
                     <a href="#" id="confirm_match_link">Done Scoring Match</a>
@@ -130,6 +140,20 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="all confirm-action-all" style="display:none;">
+        <div class="title-bar dt green">
+            <div class="vcenter confirm-action">
+                Confirm action
+            </div>
+        </div>
+
+        <div class="cancel-bar dt red">
+            <div class="vcenter cancel-action">
+                Cancel action
+            </div>
+        </div>
     </div>
 {% endblock entire_body %}
 

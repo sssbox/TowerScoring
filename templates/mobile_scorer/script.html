@@ -30,6 +30,34 @@
     {% include "mobile_scorer/device_state.js" %}
     {% include "mobile_scorer/action_queue.js" %}
 
+    var confirm_action_stored = '' ;
+    var confirm_data_stored = {} ;
+    var confirm_priority_stored = false ;
+    function confirm_action(action, data, priority) {
+        $('div.all').hide() ;
+        $('div.confirm-action-all').show() ;
+        confirm_action_stored = action ;
+        confirm_data_stored = data ;
+        confirm_priority_stored = priority ;
+    }
+    $(".title-bar.green").click(function(e){
+        e.preventDefault() ;
+        $('div.all').hide() ;
+        $('div.default-all').show() ;
+        actions.push(confirm_action_stored, confirm_data_stored, confirm_priority_stored) ;
+        confirm_action_stored = '' ;
+        confirm_data_stored = {} ;
+        confirm_priority_stored = false ;
+        $("#confirmed_action").show() ;
+        setTimeout(function(){$("#confirmed_action").fadeOut(1000)}, 250) ;
+    }) ;
+    $(".cancel-bar").click(function(e){
+        $('div.all').hide() ;
+        $('div.default-all').show() ;
+        $("#cancelled_action").show() ;
+        setTimeout(function(){$("#cancelled_action").fadeOut(1000)}, 250) ;
+    }) ;
+
     $('.scoring_cell').click(function(e){
         e.preventDefault() ;
         var obj = $(this) ;
@@ -41,7 +69,8 @@
         if (obj.is('.red')) alliance = 'red' ;
         else if (obj.is('.blue')) alliance = 'blue' ;
         var undo_score = obj.is('.undo_score') ;
-        if(obj.parent().parent().is('.center-state'))
+        var center_state = obj.parent().parent().is('.center-state') ;
+        if(center_state)
         {
             var score_count = $('div.score_count.level_' + level + ' .vcenter') ;
             if(undo_score)
@@ -50,7 +79,10 @@
                 score_count.text(parseInt(score_count.text()) + 1) ;
         }
         var data = {alliance: alliance, level: level, undo_score: undo_score} ;
-        actions.push('score', data, true) ;
+        if(center_state)
+            actions.push('score', data, true) ;
+        else
+            confirm_action('score', data, true) ;
     });
     var current_state = '' ;
     $('#return_to_normal_link').click(function(e){
