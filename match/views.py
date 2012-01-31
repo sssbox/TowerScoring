@@ -32,6 +32,9 @@ def update_from_match_event(me):
                 me.dud = True
                 me.save()
             else: # It is scorable
+                if me.dud == True:
+                    me.dud = False
+                    me.save()
                 tl.state = alliance
                 tl.save()
                 alliance_towers = TowerLevel.objects.filter(tower__name__contains='_'+alliance)
@@ -84,6 +87,9 @@ def update_from_match_event(me):
                     (tl.level == 1 and tl_2 and tl_2.state == descored_alliance):
                 tl.state = 'green'
                 tl.save()
+                if me.dud == True:
+                    me.dud = False
+                    me.save()
             else:
                 me.dud = True
                 me.save()

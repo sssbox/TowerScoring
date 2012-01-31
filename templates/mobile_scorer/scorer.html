@@ -47,7 +47,7 @@
             </div>
             <div class="normal-state state {% if is_low %}halves{% else %}thirds{% endif %}" style="display: none;">
 
-                <div class="left_scoring_col scoring_col">
+                <div class="{% if scoring_device.is_lefty %}dominant_scoring_col{% else %}non_dominant_scoring_col{% endif %} left_scoring_col scoring_col">
                     <div class="scoring_cell  level_3 {% if is_red %}blue{% else %}red{% endif %}">
                         <div class="vcenter">AV</div>
                     </div>
@@ -60,7 +60,7 @@
                         <div class="vcenter">Low GV</div>
                     </div>
                 </div>
-                <div class="right_scoring_col scoring_col">
+                <div class="{% if scoring_device.is_lefty %}non_dominant_scoring_col{% else %}dominant_scoring_col{% endif %} right_scoring_col scoring_col">
                     <div class="scoring_cell level_3 {% if is_red %}red{% else %}blue{% endif %}">
                         <div class="vcenter">AV</div>
                     </div>
@@ -77,7 +77,7 @@
 
             <div class="center-state state {% if is_low %}halves{% else %}whole{% endif %}" style="display: none;">
 
-                <div class="left_scoring_col scoring_col">
+                <div class="{% if scoring_device.is_lefty %}dominant_scoring_col{% else %}non_dominant_scoring_col{% endif %} left_scoring_col scoring_col">
                     <div class="scoring_cell undo_score level_3 hide_for_low 
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>
@@ -94,7 +94,7 @@
                         <div class="vcenter"><br />- Low GV</div>
                     </div>
                 </div>
-                <div class="right_scoring_col scoring_col">
+                <div class="{% if scoring_device.is_lefty %}non_dominant_scoring_col{% else %}dominant_scoring_col{% endif %} right_scoring_col scoring_col">
                     <div class="scoring_cell level_3 hide_for_low
                         {% if is_red %}red{% else %}blue{% endif %}"
                         {% if is_low %}style="display: none;"{% endif %}>

@@ -144,6 +144,7 @@ class ScoringDevice(models.Model):
     #Set automatically to True based on state of match, set manually to False after center not active and done scoring center.
     on_center = models.BooleanField(default=False)
     last_contact = models.DateTimeField(default=datetime.datetime.now)
+    is_lefty = models.BooleanField(default=False)
 
     def __unicode__(self):
         try:  return str(self.scorer) + ' scoring ' + str(self.tower)

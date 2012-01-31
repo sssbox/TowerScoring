@@ -26,15 +26,15 @@ var device_state = {
         }
         if(device_state.is_red) {
             $("div.center-state div.scoring_cell").removeClass('blue').addClass('red') ;
-            $("div.normal-state div.left_scoring_col div.scoring_cell")
+            $("div.normal-state div.non_dominant_scoring_col div.scoring_cell")
                 .removeClass('red').addClass('blue') ;
-            $("div.normal-state div.right_scoring_col div.scoring_cell")
+            $("div.normal-state div.dominant_scoring_col div.scoring_cell")
                 .removeClass('blue').addClass('red') ;
         } else {
             $("div.center-state div.scoring_cell").removeClass('red').addClass('blue') ;
-            $("div.normal-state div.left_scoring_col div.scoring_cell")
+            $("div.normal-state div.non_dominant_scoring_col div.scoring_cell")
                 .removeClass('blue').addClass('red') ;
-            $("div.normal-state div.right_scoring_col div.scoring_cell")
+            $("div.normal-state div.dominant_scoring_col div.scoring_cell")
                 .removeClass('red').addClass('blue') ;
         }
         device_state.update_title() ;
