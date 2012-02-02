@@ -66,17 +66,26 @@
         $("#blue_timer").html('On Center: ' + data.timer_dict.blue_timer) ;
         $("#red_timer").html('On Center: ' + data.timer_dict.red_timer) ;
         if(data.timer_dict.match_state == 'match') {
+            $(".confirmed").removeClass('red').addClass('greyed') ;
             $("#match_id").attr('disabled', 'disabled') ;
             $("#abort").attr('disabled', '') ;
         } else {
+            $(".confirmed").removeClass('red').addClass('greyed') ;
             $("#abort").attr('disabled', 'disabled') ;
             $("#match_id").attr('disabled', '') ;
         }
         if(data.timer_dict.match_state != 'pre_match')
+        {
+            $(".confirmed").removeClass('red').addClass('greyed') ;
             $("#start").attr('disabled', 'disabled') ;
+        }
         else
+        {
             $("#start").attr('disabled', '') ;
+            $(".confirmed").removeClass('red').addClass('greyed') ;
+        }
         if(data.timer_dict.match_state == 'done') {
+            $(".confirmed").addClass('red').removeClass('greyed') ;
             $("#abort").hide() ;
             $("#reset").show() ;
             $(".score_div").attr('disabled', '') ;
@@ -84,6 +93,7 @@
             $(".score_div").attr('disabled', 'disabled') ;
             $("#abort").show() ;
             $("#reset").hide() ;
+            $(".confirmed").removeClass('red').addClass('greyed') ;
         }
         $("#blue_score").html(data.match.blue_score) ;
         $("#red_score").html(data.match.red_score) ;
