@@ -6,6 +6,7 @@ from models import *
 from utils.time import get_microseconds
 from scoring.views import scorekeeper, get_scorer_data # This is not a relative import
 from match.tower_state import *
+from utils.test_leds import update_test_led
 
 try: import simplejson as json
 except: import json
@@ -52,6 +53,8 @@ def update_from_match_event(me):
                         match.red_center_active = True
                         match.red_center_active_start = datetime.datetime.now()
                     alliance_towers.update(state='off')
+                    for tl_alliance in alliance_towers:
+                        update_test_led(tl_alliance)
                     center = Tower.objects.get(name='center')
                     low_center = center.towerlevel_set.get(level=1)
                     if (alliance == 'blue' and not match.red_center_active) \
@@ -59,8 +62,11 @@ def update_from_match_event(me):
                         low_center.state = alliance
                     else:
                         low_center.state = 'purple'
+                    update_test_led(low_center)
                     alliance_scorers = ScoringDevice.objects.filter(tower__name__contains='_'+alliance)
                     alliance_scorers.update(on_center=True)
+                else:
+                    update_test_led(tl)
                 if alliance == 'red':
                     match.red_score += SCORE_SETTINGS[level]
                     match.red_score_pre_penalty += SCORE_SETTINGS[level]
@@ -87,6 +93,7 @@ def update_from_match_event(me):
                     (tl.level == 1 and tl_2 and tl_2.state == descored_alliance):
                 tl.state = 'green'
                 tl.save()
+                update_test_led(tl)
                 if me.dud == True:
                     me.dud = False
                     me.save()

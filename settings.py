@@ -2,6 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEBUG_LEDS = False
 
 import os
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
