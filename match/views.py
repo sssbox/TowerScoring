@@ -213,38 +213,13 @@ def pick_scorer(request):
     tower_name = request.GET.get('tower_name', '')
     scorer_id = request.GET.get('scorer_id', '')
 
-    if tower_name == 'low_red':
-        try:
-            sd = match.scorer_low_red.scoringdevice
-            sd.tower = None
-            sd.save()
-        except: pass
-        if str(scorer_id) == '0': match.scorer_low_red = None
-        else: match.scorer_low_red_id = scorer_id
-    elif tower_name == 'high_red':
-        try:
-            sd = match.scorer_high_red.scoringdevice
-            sd.tower = None
-            sd.save()
-        except: pass
-        if str(scorer_id) == '0': match.scorer_high_red = None
-        else: match.scorer_high_red_id = scorer_id
-    elif tower_name == 'low_blue':
-        try:
-            sd = match.scorer_low_blue.scoringdevice
-            sd.tower = None
-            sd.save()
-        except: pass
-        if str(scorer_id) == '0': match.scorer_low_blue = None
-        else: match.scorer_low_blue_id = scorer_id
-    elif tower_name == 'high_blue':
-        try:
-            sd = match.scorer_high_blue.scoringdevice
-            sd.tower = None
-            sd.save()
-        except: pass
-        if str(scorer_id) == '0': match.scorer_high_blue = None
-        else: match.scorer_high_blue_id = scorer_id
+    try:
+        sd = getattr(match, 'scorer_'+tower_name).scoringdevice
+        sd.tower = None
+        sd.save()
+    except: pass
+    if str(scorer_id) == '0': setattr(match, 'scorer_'+tower_name, None)
+    else: setattr(match, 'scorer_'+ tower_name +'_id', scorer_id)
 
     match.save()
     if str(scorer_id) != '0':
@@ -258,9 +233,15 @@ def reset_match(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():
         raise Http404
+
     match = ScoringSystem.objects.all()[0].current_match
     match.reset()
     ScoringDevice.objects.all().update(on_center=False)
+    for tower_name in ['low_red', 'high_red', 'low_blue', 'high_blue']:
+        setattr(match, 'scorer_'+tower_name, None)
+    for sd in ScoringDevice.objects.filter(tower__isnull=False):
+        setattr(match, 'scorer_'+sd.tower.name, sd.scorer)
+    match.save()
 
     #TODO change to end_match_lighting+add a delayed task for starting prematch lighting
     prematch_lighting()
