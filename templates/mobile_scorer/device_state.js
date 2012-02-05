@@ -65,6 +65,7 @@ var device_state = {
             $("div.return-to-normal").hide() ;
             $("div.confirm-match-score").hide() ;
             $("div.center-state").show() ;
+            $("div.score_count div.vcenter").text('0');
             device_state.current_state = 'center' ;
         }
         else if(device_state.server_state == 'match_done_confirmed')
@@ -86,7 +87,7 @@ var device_state = {
             $("div.no-match-state").show() ;
             device_state.current_state = 'no_match' ;
         }
-        if(device_state.server_state == 'normal_center_not_confirmed')
+        else if(device_state.server_state == 'normal_center_not_confirmed')
         {
             $("div.confirm-match-score").hide() ;
             $("div.return-to-normal").show() ;
@@ -94,6 +95,7 @@ var device_state = {
             {
                 $("div.state").hide() ;
                 $("div.center-state").show() ;
+                $("div.score_count div.vcenter").text('0');
             }
             device_state.current_state = 'normal_center_not_confirmed' ;
         }
