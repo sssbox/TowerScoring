@@ -1,5 +1,5 @@
 from django.conf import settings
-import subprocess
+import subprocess, serial
 
 LEDs = {
     'low_blue': {
@@ -70,10 +70,13 @@ def turn_off_color(tl):
 # http://dorkbotpdx.org/blog/wardcunningham/shell_programming_with_txtzyme
 # https://github.com/WardCunningham/Txtzyme
 def run_command(command):
-    subprocess.Popen(['echo "'+command+'" >/dev/ttyACM0'], stdout=subprocess.PIPE, shell=True)
+    ser = serial.Serial('/dev/ttyACM0', 9600)
+    ser.write(command + '\n')
+    ser.close()
+#    subprocess.Popen(['echo "'+command+'" >/dev/ttyACM0'], stdout=subprocess.PIPE, shell=True)
 
 def update_test_led(tl):
-    if settings.DEBUG_LEDS == False:
+    if not settings.DEBUG_LEDS:
         return
     command = ''
     if tl.state == 'off':

@@ -2,6 +2,8 @@ import datetime
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
+from django.conf import settings
+
 from models import *
 from utils.time import get_microseconds
 from scoring.views import scorekeeper, get_scorer_data # This is not a relative import
