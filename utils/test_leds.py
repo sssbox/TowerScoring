@@ -66,6 +66,9 @@ def turn_on_color(tl):
 def turn_off_color(tl):
     return LEDs[tl.tower.name]['level_'+str(tl.level)][tl.state] + '0o '
 
+# Txtzyme
+# http://dorkbotpdx.org/blog/wardcunningham/shell_programming_with_txtzyme
+# https://github.com/WardCunningham/Txtzyme
 def run_command(command):
     subprocess.Popen(['echo "'+command+'" >/dev/ttyACM0'], stdout=subprocess.PIPE, shell=True)
 
