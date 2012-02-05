@@ -3,4 +3,5 @@ simplejson
 django-debug-toolbar
 django-dtpanel-htmltidy
 django-extensions
+Celery
 Werkzeug

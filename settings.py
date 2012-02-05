@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django_extensions',
+    'djcelery',
     'south',
     'debug_toolbar',
     'debug_toolbar_htmltidy',
