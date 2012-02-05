@@ -9,6 +9,7 @@ from utils.time import get_microseconds
 from scoring.views import scorekeeper, get_scorer_data # This is not a relative import
 from match.tower_state import *
 from utils.test_leds import update_test_led
+from match.tasks import run_match
 
 try: import simplejson as json
 except: import json
@@ -254,12 +255,15 @@ def start_match(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():
         raise Http404
-    match = ScoringSystem.objects.all()[0].current_match
-    match.reset()
-    ScoringDevice.objects.all().update(on_center=False)
-    match.actual_start = datetime.datetime.now()
-    match.save()
-    start_match_lighting()
+    if settings.USE_CELERY:
+        run_match.delay()
+    else:
+        match = ScoringSystem.objects.all()[0].current_match
+        match.reset()
+        ScoringDevice.objects.all().update(on_center=False)
+        match.actual_start = datetime.datetime.now()
+        match.save()
+        start_match_lighting()
     return scorekeeper(request)
 
 @staff_member_required
