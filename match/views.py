@@ -1,24 +1,24 @@
-import datetime
+import datetime, time
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from django.conf import settings
+from celery.task.control import revoke
 
 from models import *
 from utils.time import get_microseconds
 from scoring.views import scorekeeper, get_scorer_data # This is not a relative import
 from match.tower_state import *
 from utils.test_leds import update_test_led
-from match.tasks import run_match
+from utils.field_leds import update_real_leds
+from match.tasks import run_match, abort_match
+from utils.sound import play_sound
 
 try: import simplejson as json
 except: import json
 
 #TODO create celery to automatically start the warning sequence at end of center tower activation
-# or do pseudo cron on status requests from score/timer displays, etc.
 
-# Allows us to easily implement ability to replay a match if we wanted to by iterating through Match Events
-#       This would be probably necessary in order to implement "undo"
 def update_from_match_event(me):
     alliance = me.alliance
     tower = me.tower
@@ -58,6 +58,7 @@ def update_from_match_event(me):
                     alliance_towers.update(state='off')
                     for tl_alliance in alliance_towers:
                         update_test_led(tl_alliance)
+                        update_real_leds(tl_alliance)
                     center = Tower.objects.get(name='center')
                     low_center = center.towerlevel_set.get(level=1)
                     if (alliance == 'blue' and not match.red_center_active) \
@@ -66,10 +67,12 @@ def update_from_match_event(me):
                     else:
                         low_center.state = 'purple'
                     update_test_led(low_center)
+                    update_real_leds(low_center)
                     alliance_scorers = ScoringDevice.objects.filter(tower__name__contains='_'+alliance)
                     alliance_scorers.update(on_center=True)
                 else:
                     update_test_led(tl)
+                    update_real_leds(tl)
                 if alliance == 'red':
                     match.red_score += SCORE_SETTINGS[level]
                     match.red_score_pre_penalty += SCORE_SETTINGS[level]
@@ -97,6 +100,7 @@ def update_from_match_event(me):
                 tl.state = 'green'
                 tl.save()
                 update_test_led(tl)
+                update_real_leds(tl)
                 if me.dud == True:
                     me.dud = False
                     me.save()
@@ -237,7 +241,12 @@ def reset_match(request):
     if group not in request.user.groups.all():
         raise Http404
 
-    match = ScoringSystem.objects.all()[0].current_match
+    ss = ScoringSystem.objects.all()[0]
+    match = ss.current_match
+    timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
+    if timer.days >= 0 and ss.task_id:
+        task = abort_match.delay()
+        revoke(ss.task_id, terminate=True)
     match.reset()
     ScoringDevice.objects.all().update(on_center=False)
     for tower_name in ['low_red', 'high_red', 'low_blue', 'high_blue']:
@@ -256,7 +265,10 @@ def start_match(request):
     if group not in request.user.groups.all():
         raise Http404
     if settings.USE_CELERY:
-        run_match.delay()
+        task = run_match.delay()
+        ss = ScoringSystem.objects.all()[0]
+        ss.task_id = task.task_id
+        ss.save()
     else:
         match = ScoringSystem.objects.all()[0].current_match
         match.reset()

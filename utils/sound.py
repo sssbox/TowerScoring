@@ -3,9 +3,9 @@ from django.conf import settings
 media_location = settings.STATIC_ROOT + 'sfx/'
 SOUNDS = {
     'start': 'start.wav',
-    'abort': 'start.wav',
-    'reset': 'start.wav',
-    'end': 'start.wav',
+    'abort': 'abort.wav',
+    'warning': 'warning-cartoon.wav',
+    'end': 'end.wav',
 }
 
 def play_sound(sound):

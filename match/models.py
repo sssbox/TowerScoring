@@ -165,6 +165,7 @@ class ScoringDevice(models.Model):
 
 class ScoringSystem(models.Model):
     current_match = models.ForeignKey(Match, blank=True, null=True)
+    task_id = models.CharField(max_length=100, blank=True)
 
 class MatchEvent(models.Model):
     match = models.ForeignKey(Match)

@@ -1,3 +1,5 @@
+This project uses several sound effects from freesound.org, some of which have been modified by Sam Solomon. For a list, please see media/sfx/README
+
 sudo apt-get install git-core
 
 # set up github on your work computer http://help.github.com/linux-set-up-git/

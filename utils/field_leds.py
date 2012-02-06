@@ -1,4 +1,5 @@
 import serial
+from django.conf import settings
 
 TOWERS = {
     'low_blue': { 'level_1': 0x10, },
