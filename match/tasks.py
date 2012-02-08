@@ -132,49 +132,6 @@ def run_match():
                             update_test_led(low_center)
                             update_real_leds(low_center)
 
-
-#TODO Delete after above works (forgot to commit before starting this)
-#        if match.red_center_active and center_red_state == 'none':
-#            center_red_state = 'on'
-#            center_red_counter_us = get_microseconds()
-#        if match.blue_center_active and center_blue_state == 'none':
-#            center_blue_state = 'on'
-#            center_blue_counter_us = get_microseconds()
-#        if center_red_state != 'none':
-#            red_ms_diff = round((get_microseconds() - center_red_counter_us) / 1000)
-#            if red_ms_diff > 30000: #Done
-#                center_done('red', match)
-#                center_red_state = 'none'
-#            elif red_ms_diff > 25000:
-#                if center_red_state == 'on' and (red_ms_diff < 25500 \
-#                        or 26000 < red_ms_diff < 26500 \
-#                        or 27000 < red_ms_diff < 27500 \
-#                        or 28000 < red_ms_diff < 28500):
-#                    center_red_state = 'off'
-#                    center = Tower.objects.get(name='center')
-#                    low_center = center.towerlevel_set.get(level=1)
-#                    if not match.blue_center_active:
-#                        low_center.state = 'off'
-#                    else:
-#                        low_center.state = 'blue'
-#                    update_test_led(low_center)
-#                    update_real_leds(low_center)
-#                elif center_red_state == 'off' and (25500 < red_ms_diff < 26000 \
-#                        or 26500 < red_ms_diff < 27000 \
-#                        or 27500 < red_ms_diff < 28000 or 28500 < red_ms_diff):
-#                    center_red_state = 'on'
-#                    center = Tower.objects.get(name='center')
-#                    low_center = center.towerlevel_set.get(level=1)
-#                    if not match.blue_center_active:
-#                        low_center.state = 'red'
-#                    else:
-#                        low_center.state = 'purple'
-#                    update_test_led(low_center)
-#                    update_real_leds(low_center)
-
-
-
-
         if match_state != 'end_game' and msdiff > 120000:# last 30 seconds
             match_state = 'end_game'
             end_game()
