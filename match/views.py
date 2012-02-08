@@ -17,14 +17,11 @@ from utils.sound import play_sound
 try: import simplejson as json
 except: import json
 
-#TODO create celery to automatically start the warning sequence at end of center tower activation
-
 def update_from_match_event(me):
     alliance = me.alliance
     tower = me.tower
     match = me.match
     level = me.level
-    # TODO Change lighting whenever '*.state' changes
     if '_' in tower.name: # low or high alliance tower
         if alliance in tower.name: # alliance scoring in own goal
             tl_1 = tower.towerlevel_set.get(level=1)
@@ -43,31 +40,34 @@ def update_from_match_event(me):
                 tl.save()
                 alliance_towers = TowerLevel.objects.filter(tower__name__contains='_'+alliance)
                 alliance_towers_uncharged = alliance_towers.exclude(state=alliance)
-                # Check for alliance fully charged, turn all to off if they are now charged
                 if not alliance_towers_uncharged.exists() \
-                        and ((alliance == 'blue' and not match.blue_center_active) \
-                                or (alliance == 'red' and not match.red_center_active)):
-#TODO if other timer is running and there is < 5 seconds left, set cur to other_time+5
-#TODO if the match is nearing the end set timer to match timer?
-                    if alliance == 'blue':
-                        match.blue_center_active = True
-                        match.blue_center_active_start = datetime.datetime.now()
+                        and not getattr(match, alliance+'_center_active'):
+                    center = Tower.objects.get(name='center')
+                    low_center = center.towerlevel_set.get(level=1)
+                    off_color = 'blue' if alliance=='red' else 'red'
+                    setattr(match, alliance + '_center_active', True)
+                    this_start = datetime.datetime.now()
+                    if match.actual_start+datetime.timedelta(seconds=120) < this_start:
+                        this_start = match.actual_start + datetime.timedelta(seconds=120)
+                        if not getattr(match, off_color + '_center_active'):
+                            low_center.state = alliance
+                        else: low_center.state = 'purple'
+                    elif not getattr(match, off_color + '_center_active'):
+                        low_center.state = alliance
                     else:
-                        match.red_center_active = True
-                        match.red_center_active_start = datetime.datetime.now()
+                        low_center.state = 'purple'
+                        other_start = getattr(match, off_color + '_center_active_start')
+                        if (this_start - other_start).total_seconds() < 5.0:
+                            td = datetime.timedelta(seconds=5)
+                            this_start = other_start+td
+                    setattr(match, alliance + '_center_active_start', this_start)
+                    update_test_led(low_center)
+                    update_real_leds(low_center)
+
                     alliance_towers.update(state='off')
                     for tl_alliance in alliance_towers:
                         update_test_led(tl_alliance)
                         update_real_leds(tl_alliance)
-                    center = Tower.objects.get(name='center')
-                    low_center = center.towerlevel_set.get(level=1)
-                    if (alliance == 'blue' and not match.red_center_active) \
-                            or (alliance == 'red' and not match.blue_center_active):
-                        low_center.state = alliance
-                    else:
-                        low_center.state = 'purple'
-                    update_test_led(low_center)
-                    update_real_leds(low_center)
                     alliance_scorers = ScoringDevice.objects.filter(tower__name__contains='_'+alliance)
                     alliance_scorers.update(on_center=True)
                 else:
@@ -247,6 +247,8 @@ def reset_match(request):
     if timer.days >= 0 and ss.task_id:
         task = abort_match.delay()
         revoke(ss.task_id, terminate=True)
+    else:
+        prematch_lighting()
     match.reset()
     ScoringDevice.objects.all().update(on_center=False)
     for tower_name in ['low_red', 'high_red', 'low_blue', 'high_blue']:
@@ -255,8 +257,6 @@ def reset_match(request):
         setattr(match, 'scorer_'+sd.tower.name, sd.scorer)
     match.save()
 
-    #TODO change to end_match_lighting+add a delayed task for starting prematch lighting
-    prematch_lighting()
     return scorekeeper(request)
 
 @staff_member_required

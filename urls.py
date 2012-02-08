@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^timer/$', 'views.timer', name='timer'),
     url(r'^scorekeeper/$', 'views.scorekeeper', name='scorekeeper'),
     url(r'^test_ajax$', 'views.test_ajax', name='test_ajax'),
+    url(r'^logout/$', 'views.logout', name='logout'),
     # url(r'^scoring/', include('foo.urls')),
     url(r'^match/', include('match.urls')),
     # Uncomment the next line to enable the admin:

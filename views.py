@@ -1,6 +1,7 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import logout as django_logout
 from django.contrib.auth.models import Group
 from django.forms.models import model_to_dict
 
@@ -203,3 +204,7 @@ def scorekeeper(request):
 
 def test_ajax(request):
     return HttpResponse('{"success":true}', 'application/json')
+
+def logout(request):
+    django_logout(request)
+    return HttpResponseRedirect('/')
