@@ -8,8 +8,10 @@ from django.contrib.auth.models import Group, User
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        group = Group(name='Displays')
-        group.save()
+        try:
+            group = Group(name='Displays')
+            group.save()
+        except: pass
 
     def backwards(self, orm):
         "Write your backwards methods here."

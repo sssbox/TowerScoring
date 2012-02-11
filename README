@@ -35,24 +35,24 @@ python manage.py runserver_plus <your ip>:8000
 
 Getting some stuff to work:
 log into http://<your ip>:8000/admin/
+Open in a new tab http://<your ip>:8000/ you should see the scorekeeper display (the migrations add the first user that exists in the database (the superuser you created with syncdb) to the scorekeeper group which makes the awesome scorekeeper display the screen you see at the homepage)
+
 click 'Users'
 
-Add user "scorer1" (with a short password) click "Save and continue editing"
-Make that user "Staff status" and "save"
+Add user "sk1" (with a short password) click "Save and continue editing"
+Make that user "Staff status" and add them to the "Scorers" group then click "save"
 # If you want you can repeat three more times for extra scorers
 
 
 Add user "timer" (with a good password) click "Save and continue editing"
-Make user "Staff status" AND add them to the group "Timers" before saving
+Make user "Staff status" AND add them to the group "Displays" before saving
 
+Back at the scorekeeper homepage, refresh to get all your new scorers in the "Scorer" drop down menus, assign your scorers to the different goals.
 
-Click on "home" in the nav bar to get back to the original logged in page.
-Click on the "add" button to the right of "scoring devices"
-Select a scorer and add them to a non-center tower that has not yet been assigned. (and Save) (eventually this will be controllable from the main Scorekeeper's (not scorer) control panel)
 
 Open a different browser (Firefox vs Chrome (incognito doesn't work with django's dev server for some reason)) and go to http://<your ip>:8000/
 Log in as 'timer'
 
 Use your phone on your wifi to go to http://<your ip>:8000/ and log in as a scorer.
 
-From the original superuser account go to http://<your ip>:8000/ and you should see a pretty awesome scorekeeper display.
+From the original superuser account on the scorekeeper display start a match and play with other stuff like that.
