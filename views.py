@@ -7,6 +7,7 @@ from django.forms.models import model_to_dict
 
 from match.models import ScoringDevice, ScoringSystem, Match, MatchEvent
 from utils.time import elapsed_time, get_microseconds
+from display.views import display, get_timer_dict
 
 import datetime
 try: import simplejson as json
@@ -17,11 +18,10 @@ def index(request):
     group = Group.objects.get(name='Scorekeepers')
     if group in request.user.groups.all():
         return scorekeeper(request)
-    group = Group.objects.get(name='Timer')
+    group = Group.objects.get(name='Displays')
     if group in request.user.groups.all():
-        return timer(request)
+        return display(request)
     return scorer(request)
-    return render_to_response('index.html', locals())
 
 def get_scorer_data(scoring_device):
     data = {'state': '', 'is_red': '', 'is_low': '', 'primary':'', 'non_primary':''}
@@ -52,57 +52,6 @@ def scorer(request):
     return render_to_response('mobile_scorer/scorer.html', locs)
 
 @staff_member_required
-def timer(request, get_dict=False):
-    group = Group.objects.get(name='Scorekeepers')
-    if group not in request.user.groups.all():
-        group = Group.objects.get(name='Timer')
-        if group not in request.user.groups.all():
-            raise Http404
-    match = ScoringSystem.objects.all()[0].current_match
-    match_state = 'pre_match'
-    try:
-        timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
-        if timer.days < 0:
-            timer = '0:00'
-            match_state = 'done'
-        else:
-            seconds = '00' + str(timer.seconds%60)
-            timer = str(timer.seconds/60) + ':' + seconds[-2:]
-            match_state = 'match'
-    except: timer = '2:30'
-    try:
-        red_timer = (match.red_center_active_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
-        if red_timer.days < 0:
-            red_timer = '00'
-        else:
-            seconds = '00' + str(red_timer.seconds)
-            red_timer = seconds[-2:]
-    except: red_timer = '00'
-    try:
-        blue_timer = (match.blue_center_active_start + datetime.timedelta(seconds=30)) - datetime.datetime.now()
-        if blue_timer.days < 0:
-            blue_timer = '00'
-        else:
-            seconds = '00' + str(blue_timer.seconds)
-            blue_timer = seconds[-2:]
-    except: blue_timer = '00'
-    try: red_score = match.red_score
-    except: red_score = 0
-    try: blue_score = match.blue_score
-    except: blue_score = 0
-    if request.is_ajax() or get_dict:
-        if match.is_practice:  practice = 'Practice'
-        else:  practice = ''
-        response = {'timer': timer, 'blue_timer': blue_timer, 'red_timer': red_timer, \
-                'match': {'red_score': red_score, 'blue_score': blue_score, 'id':match.id }, \
-                'match_state':match_state, 'practice':practice, \
-            }
-        if get_dict:
-            return response
-        return HttpResponse(json.dumps(response), 'application/json')
-    return render_to_response('timer.html', locals())
-
-@staff_member_required
 def scorekeeper(request):
     group = Group.objects.get(name='Scorekeepers')
     if group not in request.user.groups.all():
@@ -116,7 +65,7 @@ def scorekeeper(request):
         match = ss.current_match
         alliances = match.get_alliances()
     except: match = None
-    timer_dict = timer(request, True)
+    timer_dict = get_timer_dict()
     sd_avail = ScoringDevice.objects.filter(tower__isnull=True)
     towers = {}
     if timer_dict['match_state'] != 'pre_match':

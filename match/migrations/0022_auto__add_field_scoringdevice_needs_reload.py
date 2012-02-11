@@ -1,18 +1,21 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
-from django.contrib.auth.models import Group, User
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        group = Group(name='Displays')
-        group.save()
+        
+        # Adding field 'ScoringDevice.needs_reload'
+        db.add_column('match_scoringdevice', 'needs_reload', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
+
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        
+        # Deleting field 'ScoringDevice.needs_reload'
+        db.delete_column('match_scoringdevice', 'needs_reload')
 
 
     models = {
@@ -61,7 +64,9 @@ class Migration(DataMigration):
             'blue_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_blue_2'", 'to': "orm['tournament.Team']"}),
             'blue_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'blue_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_center_active_start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'blue_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
@@ -73,37 +78,50 @@ class Migration(DataMigration):
             'red_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_red_2'", 'to': "orm['tournament.Team']"}),
             'red_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'red_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_center_active_start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'red_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'scorer_high_blue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_high_blue'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_high_blue_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_high_red': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_high_red'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_high_red_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_low_blue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_low_blue'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_low_blue_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_low_red': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_low_red'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_low_red_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'time': ('django.db.models.fields.DateTimeField', [], {})
         },
         'match.matchevent': {
-            'Meta': {'object_name': 'MatchEvent'},
+            'Meta': {'ordering': "['-id']", 'unique_together': "(('scorer', 'collision_id'),)", 'object_name': 'MatchEvent'},
             'alliance': ('django.db.models.fields.CharField', [], {'max_length': '6'}),
+            'collision_id': ('django.db.models.fields.IntegerField', [], {}),
+            'dud': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'level': ('django.db.models.fields.IntegerField', [], {}),
             'match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
             'microseconds': ('django.db.models.fields.BigIntegerField', [], {}),
             'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"}),
+            'undo_score': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'match.scoringdevice': {
             'Meta': {'object_name': 'ScoringDevice'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_lefty': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_contact': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'needs_reload': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'on_center': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+            'scorer': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
+            'tower': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['match.Tower']", 'unique': 'True', 'null': 'True', 'blank': 'True'})
         },
         'match.scoringsystem': {
             'Meta': {'object_name': 'ScoringSystem'},
-            'current_match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'current_match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']", 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'task_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
         },
         'match.tower': {
             'Meta': {'object_name': 'Tower'},

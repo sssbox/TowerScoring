@@ -27,6 +27,13 @@ function do_ajax() {
                         timeout = setTimeout(do_ajax, 500);
                     last_valid_request = Math.round(new Date().getTime() / 10) ;
                 }
+                else
+                {
+                    if(Object.keys(actions.queue).length > 0)
+                        do_ajax() ;
+                    else
+                        timeout = setTimeout(do_ajax, 500);
+                }
             },
             error: function(x, e){
                 if (e === 'parsererror')

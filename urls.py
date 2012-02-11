@@ -8,12 +8,12 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'views.index', name='index'),
-    url(r'^timer/$', 'views.timer', name='timer'),
     url(r'^scorekeeper/$', 'views.scorekeeper', name='scorekeeper'),
     url(r'^test_ajax$', 'views.test_ajax', name='test_ajax'),
     url(r'^logout/$', 'views.logout', name='logout'),
     # url(r'^scoring/', include('foo.urls')),
     url(r'^match/', include('match.urls')),
+    url(r'^display/', include('display.urls')),
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/site_media/favicon.ico'}),

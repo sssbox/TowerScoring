@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/site_media/css/display.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block entire_body %}
+
+    <div class="all all-default">
+        Waiting for data<!-- replace with logo? -->
+    </div>
+
+    <div class="all all-timer" style="display:none;">
+        {% include "display/timer.html" %}
+    </div>
+{% endblock entire_body %}
+
+{% block script %}
+    {% include "display/script.html" %}
+{% endblock %}

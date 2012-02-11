@@ -1,7 +1,8 @@
 import datetime
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
+from display.models import DisplayUser
 from tournament.models import Team
 from utils.time import elapsed_time, get_microseconds
 SCORE_SETTINGS = { \
@@ -145,6 +146,7 @@ class ScoringDevice(models.Model):
     on_center = models.BooleanField(default=False)
     last_contact = models.DateTimeField(default=datetime.datetime.now)
     is_lefty = models.BooleanField(default=False)
+    needs_reload = models.BooleanField(default=False)
 
     def __unicode__(self):
         try:  return str(self.scorer) + ' scoring ' + str(self.tower)
@@ -182,3 +184,14 @@ class MatchEvent(models.Model):
     class Meta:
         unique_together = ('scorer', 'collision_id')
         ordering = ['-id']
+
+def create_user_types_from_groups(sender, instance, created, **kwargs):
+    group, _ = Group.objects.get_or_create(name='Scorers')
+    if group in instance.groups.all():
+        sd, _ = ScoringDevice.objects.get_or_create(scorer=instance)
+    group, _ = Group.objects.get_or_create(name='Displays')
+    if group in instance.groups.all():
+        tu, _ = DisplayUser.objects.get_or_create(user=instance)
+
+models.signals.post_save.connect(create_user_types_from_groups, sender=User)
+

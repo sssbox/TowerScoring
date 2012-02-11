@@ -153,7 +153,7 @@ def state_update(data, scoring_device):
         data['state'] = 'prematch'
         return data
     else:
-        timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
+        timer = (match.actual_start + datetime.timedelta(seconds=151)) - datetime.datetime.now()
         if timer.days < 0:
             if getattr(match, 'scorer_' + data['tower_name'] + '_confirmed'):
                 data['state'] = 'match_done_confirmed'
@@ -243,10 +243,12 @@ def reset_match(request):
 
     ss = ScoringSystem.objects.all()[0]
     match = ss.current_match
-    timer = (match.actual_start + datetime.timedelta(seconds=150)) - datetime.datetime.now()
+    timer = (match.actual_start + datetime.timedelta(seconds=151)) - datetime.datetime.now()
     if timer.days >= 0 and ss.task_id:
         task = abort_match.delay()
         revoke(ss.task_id, terminate=True)
+        from celery.task.control import discard_all
+        discard_all()
     else:
         prematch_lighting()
     match.reset()

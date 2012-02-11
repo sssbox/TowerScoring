@@ -1,0 +1,64 @@
+<script type="text/javascript">
+    var next_screen = 'false' ;
+    var skip_to_screen = '' ;
+    var current_screen = '' ;
+    var timeout = false ;
+    // include event handling code for each display type
+    {% include "display/timer.js" %}
+    
+    // include ajax/response parsing/display dispatching code
+    {% include "display/ajax.js" %}
+
+    function skip_to_screen_func(screen, e)
+    {
+        e.preventDefault() ;
+        skip_to_screen = screen ;
+        if(timeout)
+            clearTimeout(timeout) ;
+        do_ajax() ;
+    }
+    $(document).keydown(function(e){
+        switch(e.keyCode){
+            case 39: // right arrow
+                next_screen = 'true' ;
+                skip_to_screen_func('', e) ;
+                break ;
+            case 49: // 1
+            case 84: // t
+                skip_to_screen_func('timer', e) ;
+                break ;
+            case 50: // 2
+            case 82: // r
+                skip_to_screen_func('ranking', e) ;
+                break ;
+        }
+    }) ;
+
+    $( document ).ready( function() {
+        function set_scale(target, factor, min, max)
+        {
+            var scaleSource = $('body').width(),
+                scaleFactor = factor,
+                maxScale = max,
+                minScale = min;
+
+            var fontSize = scaleSource * scaleFactor;
+
+            if (fontSize > maxScale) fontSize = maxScale;
+            if (fontSize < minScale) fontSize = minScale;
+
+            $(target).css('font-size', fontSize + '%');
+        }
+        var setBodyScale = function() {
+            set_scale('.very-large', .8, 100, 1600) ;
+            set_scale('.medium', .4, 100, 1600) ;
+        }
+
+        $(window).resize(function(){
+            setBodyScale();
+        });
+
+        //Fire it when the page first loads:
+        setBodyScale();
+    });
+</script>
