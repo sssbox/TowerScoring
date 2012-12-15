@@ -27,6 +27,13 @@ DATABASES = {
     }
 }
 
+#BROKER_HOST = "localhost"
+#BROKER_PORT = 5672
+#BROKER_USER = "scoring"
+#BROKER_PASSWORD = "ancoiaoncuhncaoe"
+#BROKER_VHOST = "scoring"
+BROKER_URL = 'amqp://scoring:ancoiaoncuhncaoe@localhost:5672/scoring'
+
 SOUTH_DATABASE_ADAPTERS = {'default': 'south.db.mysql' }
 
 TIME_ZONE = 'America/Chicago'
@@ -78,7 +85,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'scoring.urls'
+ROOT_URLCONF = 'urls'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -89,6 +96,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django_extensions',
+    'kombu.transport.django',
     'djcelery',
     'south',
     'debug_toolbar',
@@ -141,6 +149,10 @@ LOGGING = {
 from local_settings import *
 ##### Things below can use stuff from settings local (BASE_URL for example)
 #####
+
+if USE_CELERY:
+    import djcelery
+    djcelery.setup_loader()
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"

@@ -60,6 +60,7 @@ python manage.py migrate
 
 ```bash
 python manage.py runserver_plus <your ip>:8000
+gunicorn -b <your ip>:8000 wsgi.scoring
 ```
 
 Getting some stuff to work:

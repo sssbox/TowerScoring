@@ -152,3 +152,8 @@ def test_task():
     for i in range(1,60):
         print i
         time.sleep(1)
+
+@task()
+def add(x, y):
+        return x + y
+
