@@ -8,12 +8,14 @@ This project uses several sound effects from freesound.org, some of which have b
 
 * [http://help.github.com/linux-set-up-git/](http://help.github.com/linux-set-up-git/)
 https://github.com/sssbox/TowerScoring/edit/master/README.md#
+
 ## Get the repo
+
 ```bash
 git clone git@github.com:sssbox/TowerScoring.git
 mv TowerScoring scoring
 cd scoring
-```bash
+```
 
 ## Install some system requirements
 
