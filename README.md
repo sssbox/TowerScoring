@@ -19,12 +19,14 @@ cd scoring
 
 ## Install some system requirements
 
+```bash
 sudo apt-get install -y mysql-server
 sudo apt-get install -y python-pip
 sudo apt-get install -y python-mysqldb
 sudo apt-get install -y python-profiler
 sudo apt-get install -y libtidy-dev
 sudo apt-get install -y libmysqlclient-dev
+```
 
 ## install virtualenv(wrapper) and then create a virtualenv for scoring
 
