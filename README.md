@@ -1,13 +1,30 @@
 This project uses several sound effects from freesound.org, some of which have been modified by Sam Solomon. For a list, please see media/sfx/README
 
-sudo apt-get install git-core
+## Install git
 
-# set up github on your work computer http://help.github.com/linux-set-up-git/
+`sudo apt-get install git-core`
 
+## Set up github on your work computer 
+
+* [http://help.github.com/linux-set-up-git/](http://help.github.com/linux-set-up-git/)
+
+## Get the repo
+```bash
 git clone git@github.com:sssbox/TowerScoring.git
 mv TowerScoring scoring
 cd scoring
+```bash
 
+## install virtualenv(wrapper) and then create a virtualenv for scoring
+
+```bash
+sudo pip install virtualenv
+sudo pip install virtualenvwrapper
+
+mkvirtualenv scoring --no-site-packages
+```
+
+```bash
 sudo apt-get install -y mysql-server
 sudo apt-get install -y python-mysqldb
 sudo apt-get install -y python-pip
@@ -17,21 +34,28 @@ sudo apt-get install -y libtidy-dev
 sudo pip install -r requirements.txt
 
 touch local_settings.py
+```
 
 # In mysql:
+
+```mysql
 create database scoring;
 CREATE USER 'scoring'@'localhost' IDENTIFIED BY '304c78aeeedec74b14d42a2324448f39';
 GRANT ALL PRIVILEGES ON scoring.* TO 'scoring'@'localhost';
+```
 
 # install django1.3.1 (http://www.djangoproject.com/download/1.3.1/tarball/
 
+```bash
 python manage.py syncdb #Create superuser when prompted
 python manage.py migrate
+```
 
 # ~~~ Optionally you may add things to local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
 
+```bash
 python manage.py runserver_plus <your ip>:8000
-
+```
 
 Getting some stuff to work:
 log into http://<your ip>:8000/admin/
@@ -56,3 +80,7 @@ Log in as 'timer'
 Use your phone on your wifi to go to http://<your ip>:8000/ and log in as a scorer.
 
 From the original superuser account on the scorekeeper display start a match and play with other stuff like that.
+
+# Notes
+
+For the actual (non-dev) install you will probably need to set this up with apache and you will definitely also need to install Celery to handle sound/lighting
