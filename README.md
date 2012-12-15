@@ -7,13 +7,22 @@ This project uses several sound effects from freesound.org, some of which have b
 ## Set up github on your work computer 
 
 * [http://help.github.com/linux-set-up-git/](http://help.github.com/linux-set-up-git/)
-
+https://github.com/sssbox/TowerScoring/edit/master/README.md#
 ## Get the repo
 ```bash
 git clone git@github.com:sssbox/TowerScoring.git
 mv TowerScoring scoring
 cd scoring
 ```bash
+
+## Install some system requirements
+
+sudo apt-get install -y mysql-server
+sudo apt-get install -y python-pip
+sudo apt-get install -y python-mysqldb
+sudo apt-get install -y python-profiler
+sudo apt-get install -y libtidy-dev
+sudo apt-get install -y libmysqlclient-dev
 
 ## install virtualenv(wrapper) and then create a virtualenv for scoring
 
@@ -22,21 +31,19 @@ sudo pip install virtualenv
 sudo pip install virtualenvwrapper
 
 mkvirtualenv scoring --no-site-packages
+deactivate
+workon scoring
 ```
+The last two lines aren't necessary, but are for informational purposes (Every time you run `runserver` or `syncdb` or `migrate` you will need to `workon scoring` to activate the virtualenv.
+
 
 ```bash
-sudo apt-get install -y mysql-server
-sudo apt-get install -y python-mysqldb
-sudo apt-get install -y python-pip
-sudo apt-get install -y python-profiler
-sudo apt-get install -y libtidy-dev
-
-sudo pip install -r requirements.txt
+pip install -r requirements.txt
 
 touch local_settings.py
 ```
 
-# In mysql:
+### In mysql:
 
 ```mysql
 create database scoring;
@@ -44,14 +51,12 @@ CREATE USER 'scoring'@'localhost' IDENTIFIED BY '304c78aeeedec74b14d42a2324448f3
 GRANT ALL PRIVILEGES ON scoring.* TO 'scoring'@'localhost';
 ```
 
-# install django1.3.1 (http://www.djangoproject.com/download/1.3.1/tarball/
-
 ```bash
 python manage.py syncdb #Create superuser when prompted
 python manage.py migrate
 ```
 
-# ~~~ Optionally you may add things to local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
+~~~ Optionally you may add things to local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
 
 ```bash
 python manage.py runserver_plus <your ip>:8000
@@ -65,7 +70,7 @@ click 'Users'
 
 Add user "sk1" (with a short password) click "Save and continue editing"
 Make that user "Staff status" and add them to the "Scorers" group then click "save"
-# If you want you can repeat three more times for extra scorers
+* If you want you can repeat three more times for extra scorers
 
 
 Add user "timer" (with a good password) click "Save and continue editing"
