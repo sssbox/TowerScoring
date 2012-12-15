@@ -8,21 +8,25 @@ This project uses several sound effects from freesound.org, some of which have b
 
 * [http://help.github.com/linux-set-up-git/](http://help.github.com/linux-set-up-git/)
 https://github.com/sssbox/TowerScoring/edit/master/README.md#
+
 ## Get the repo
+
 ```bash
 git clone git@github.com:sssbox/TowerScoring.git
 mv TowerScoring scoring
 cd scoring
-```bash
+```
 
 ## Install some system requirements
 
+```bash
 sudo apt-get install -y mysql-server
 sudo apt-get install -y python-pip
 sudo apt-get install -y python-mysqldb
 sudo apt-get install -y python-profiler
 sudo apt-get install -y libtidy-dev
 sudo apt-get install -y libmysqlclient-dev
+```
 
 ## install virtualenv(wrapper) and then create a virtualenv for scoring
 
