@@ -7,7 +7,6 @@ This project uses several sound effects from freesound.org, some of which have b
 ## Set up github on your work computer 
 
 * [http://help.github.com/linux-set-up-git/](http://help.github.com/linux-set-up-git/)
-https://github.com/sssbox/TowerScoring/edit/master/README.md#
 
 ## Get the repo
 
@@ -80,8 +79,9 @@ python manage.py collectstatic
 python manage.py runserver 0.0.0.0:8000
 ```
 
-Getting some stuff to work:
-log into http://<your ip>:8000/admin/
+## Getting some stuff to work:
+
+log into `http://<your ip>:8000/admin/`
 Open in a new tab http://<your ip>:8000/ you should see the scorekeeper display (the migrations add the first user that exists in the database (the superuser you created with syncdb) to the scorekeeper group which makes the awesome scorekeeper display the screen you see at the homepage)
 
 click 'Users'
@@ -100,10 +100,12 @@ Back at the scorekeeper homepage, refresh to get all your new scorers in the "Sc
 Open a different browser (Firefox vs Chrome (incognito doesn't work with django's dev server for some reason)) and go to http://<your ip>:8000/
 Log in as 'timer'
 
-Use your phone on your wifi to go to http://<your ip>:8000/ and log in as a scorer.
+Use your phone on your wifi to go to `http://<your ip>:8000/` and log in as a scorer.
 
 From the original superuser account on the scorekeeper display start a match and play with other stuff like that.
 
 # Notes
 
 For the actual (non-dev) install you will probably need to set this up with apache and you will definitely also need to install Celery to handle sound/lighting
+
+See [docs/production_setup.md](docs/production_setup.md) for details.
