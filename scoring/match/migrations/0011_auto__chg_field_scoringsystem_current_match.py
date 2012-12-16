@@ -7,15 +7,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Changing field 'ScoringSystem.current_match'
         db.alter_column('match_scoringsystem', 'current_match_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['match.Match'], null=True))
 
 
     def backwards(self, orm):
-        
+
         # Changing field 'ScoringSystem.current_match'
-        db.alter_column('match_scoringsystem', 'current_match_id', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['match.Match']))
+        db.alter_column('match_scoringsystem', 'current_match_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['match.Match']))
 
 
     models = {

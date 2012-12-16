@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'south',
     'debug_toolbar',
     'debug_toolbar_htmltidy',
+    'django_extensions',
 
     'scoring.match',
     'scoring.tournament',

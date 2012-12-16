@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'ScoringSystem'
         db.create_table('match_scoringsystem', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -47,7 +47,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'ScoringSystem'
         db.delete_table('match_scoringsystem')
 
@@ -67,7 +67,7 @@ class Migration(SchemaMigration):
         db.add_column('match_matchevent', 'team', self.gf('django.db.models.fields.CharField')(default='center', max_length=4), keep_default=False)
 
         # Adding field 'MatchEvent.ts'
-        db.add_column('match_matchevent', 'ts', self.gf('django.db.models.fields.IntegerField')(default=datetime.datetime(2011, 12, 9, 1, 2, 27, 89004)), keep_default=False)
+        db.add_column('match_matchevent', 'ts', self.gf('django.db.models.fields.IntegerField')(null=True), keep_default=False)
 
         # Deleting field 'MatchEvent.microseconds'
         db.delete_column('match_matchevent', 'microseconds')

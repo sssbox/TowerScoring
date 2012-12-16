@@ -1,46 +1,27 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
+        "Write your forwards methods here."
+        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        if not db.dry_run:
+            group = orm['auth.group'].objects.get(name='Scorers')
+            for user_name in ['scorer_1', 'scorer_2', 'scorer_3', 'scorer_4']:
+                user = orm['auth.user'](username=user_name, password=u'pbkdf2_sha256$10000$4nqtqTwANr9E$8vSaRiZnddt0WkuU3ekcqI3p4AiG7sZMdH3YwDRUdIe=')
+                user.is_staff = True
+                user.save()
+                group.user_set.add(user)
 
-        # Changing field 'Match.scorer_low_red'
-        db.alter_column('match_match', 'scorer_low_red_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.scorer_low_blue'
-        db.alter_column('match_match', 'scorer_low_blue_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.actual_start'
-        db.alter_column('match_match', 'actual_start', self.gf('django.db.models.fields.DateTimeField')(null=True))
-
-        # Changing field 'Match.scorer_high_blue'
-        db.alter_column('match_match', 'scorer_high_blue_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.scorer_high_red'
-        db.alter_column('match_match', 'scorer_high_red_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
+                sd = orm['match.ScoringDevice'](scorer=user)
+                sd.save()
 
     def backwards(self, orm):
-
-        # Changing field 'Match.scorer_low_red'
-        db.alter_column('match_match', 'scorer_low_red_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.scorer_low_blue'
-        db.alter_column('match_match', 'scorer_low_blue_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.actual_start'
-        db.alter_column('match_match', 'actual_start', self.gf('django.db.models.fields.DateTimeField')(null=True))
-
-        # Changing field 'Match.scorer_high_blue'
-        db.alter_column('match_match', 'scorer_high_blue_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
-        # Changing field 'Match.scorer_high_red'
-        db.alter_column('match_match', 'scorer_high_red_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {
@@ -88,7 +69,9 @@ class Migration(SchemaMigration):
             'blue_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_blue_2'", 'to': "orm['tournament.Team']"}),
             'blue_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'blue_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'blue_center_active_start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'blue_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'blue_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
@@ -100,37 +83,50 @@ class Migration(SchemaMigration):
             'red_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'as_red_2'", 'to': "orm['tournament.Team']"}),
             'red_2_av_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'red_2_gv_present': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_center_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'red_center_active_start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'red_penalties': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'red_score_pre_penalty': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'scorer_high_blue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_high_blue'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_high_blue_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_high_red': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_high_red'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_high_red_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_low_blue': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_low_blue'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_low_blue_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'scorer_low_red': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'scoring_low_red'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'scorer_low_red_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'time': ('django.db.models.fields.DateTimeField', [], {})
         },
         'match.matchevent': {
-            'Meta': {'object_name': 'MatchEvent'},
+            'Meta': {'ordering': "['-id']", 'unique_together': "(('scorer', 'collision_id'),)", 'object_name': 'MatchEvent'},
             'alliance': ('django.db.models.fields.CharField', [], {'max_length': '6'}),
+            'collision_id': ('django.db.models.fields.IntegerField', [], {}),
+            'dud': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'level': ('django.db.models.fields.IntegerField', [], {}),
             'match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
             'microseconds': ('django.db.models.fields.BigIntegerField', [], {}),
             'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"}),
+            'undo_score': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'match.scoringdevice': {
             'Meta': {'object_name': 'ScoringDevice'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_lefty': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_contact': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'needs_reload': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'on_center': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'scorer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'tower': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Tower']"})
+            'scorer': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
+            'tower': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['match.Tower']", 'unique': 'True', 'null': 'True', 'blank': 'True'})
         },
         'match.scoringsystem': {
             'Meta': {'object_name': 'ScoringSystem'},
-            'current_match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'current_match': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['match.Match']", 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'task_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
         },
         'match.tower': {
             'Meta': {'object_name': 'Tower'},
@@ -151,7 +147,9 @@ class Migration(SchemaMigration):
             'gv_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'have_av': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'have_gv': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'highest_match_points': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'match_points': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'number': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'school': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -160,3 +158,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['match']
+    symmetrical = True
