@@ -63,7 +63,6 @@ python manage.py migrate
 ~~~ Optionally you may add things to local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
 
 ```bash
-python manage.py runserver_plus <your ip>:8000
 gunicorn -b <your ip>:8000 wsgi.scoring
 ```
 
