@@ -1,0 +1,52 @@
+html, body { 
+    height: 100%; margin: 0; padding: 0; text-align: center; 
+    -moz-user-select: none; -khtml-user-select: none;
+    -webkit-user-select: none; user-select: none;
+}
+a img { border: none; }
+img a { border: none; }
+img { border: none; }
+
+.cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
+
+.error-message-holder { position: fixed; top: 0px; left: 0px; width: 100%; height: 10%; background-color:#f00; z-index: 4000; cursor:pointer; }
+.error-dismiss { position: absolute; bottom: 0px; right: 1%; font-size: 60%; }
+.error-timer { position: absolute; bottom: 0px; left: 1%; font-size: 60%; }
+.error-message { font-size: 75% ; margin-top: 2% ;}
+
+.action-status { position: fixed; top: 0px; left: 0px; width: 100%; height: 10%; z-index: 5000; cursor:pointer; }
+
+.red { background: #f55; }
+.blue { background: #55f; }
+.green { background: #5f5; }
+.real-red { background: #f00; }
+.real-blue { background: #00f; }
+
+.dt { display: table ; }
+.all { width: 100%; height: 100%; margin: auto; }
+.title-bar { width: 100%; height: 10%; display: table; }
+.controller-area { width: 100%; height: 80%; margin:auto; }
+.footer-bar { width: 100%; height: 10%; display: table; }
+.title-bar.green { cursor:pointer; }
+.cancel-bar { width: 100%; height: 90%; display: table; cursor:pointer; }
+
+.state { width: 100%; height:100%; margin: auto; }
+
+.scoring_col { float: left;  height:100%; width: 50% ; margin:auto; cursor:pointer;}
+
+.thirds .scoring_cell { height: 33% ; }
+.halves .scoring_cell { height: 50% ; }
+.whole .scoring_cell { height: 100% ; border-bottom: 2px black solid; }
+.left_scoring_col .scoring_cell { border-right: 1px black solid; }
+.right_scoring_col .scoring_cell { border-left: 1px black solid; }
+.scoring_cell { border-top: 2px black solid; }
+.scoring_cell.level_1 { border-bottom: 2px black solid; }
+
+.scoring_cell { display: table; width: 100%; }
+.vcenter { display: table-cell; vertical-align: middle; }
+
+.score_count { position: fixed ; background: white ; left: 36% ; width: 28% ; 
+    border: 2px black solid; display: table; }
+.score_count.level_1 {  top: 50% ; height: 16% ; }
+.score_count.level_2 {  top: 10% ; height: 16% ; }
+.score_count.level_3 {  top: 10% ; height: 16% ; }

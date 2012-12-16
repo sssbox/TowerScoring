@@ -44,7 +44,7 @@ The last two lines aren't necessary, but are for informational purposes (Every t
 ```bash
 pip install -r requirements.txt
 
-touch local_settings.py
+touch scoring/local_settings.py
 ```
 
 ### In mysql:
@@ -55,16 +55,29 @@ CREATE USER 'scoring'@'localhost' IDENTIFIED BY '304c78aeeedec74b14d42a2324448f3
 GRANT ALL PRIVILEGES ON scoring.* TO 'scoring'@'localhost';
 ```
 
+### Back from the standard bash prompt (with the 'scoring' virtualenv enabled (`workon scoring`)
+
 ```bash
 python manage.py syncdb #Create superuser when prompted
 python manage.py migrate
 ```
 
-~~~ Optionally you may add things to local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
+## Collecting static files
+
+Before trying the server and wWenever you add/modify static media in scoring/match/static or scoring/*/static you need to run:
 
 ```bash
-python manage.py runserver_plus <your ip>:8000
-gunicorn -b <your ip>:8000 wsgi.scoring
+python manage.py collectstatic
+```
+
+~~~ Optionally you may add things to scoring/local_settings.py file to override settings locally--this does not get tracked so they will only effect your install.
+
+## Start the server
+
+* Using 0.0.0.0 as the ip to bind to means it will be listening on all interfaces so you can use [http://127.0.0.1:8000](http://127.0.0.1:8000) or [http://localhost:8000](http://localhost:8000) from your local machine or http://<your_ip>:8000 from your machine or any other computer on your network (also useful for testing as even without going to incognito you can have 3 different sessions, one each for those 3 urls (and 6 if you use incognito, 12 if you use incognito on both Chrome and Chromium, and 18 if you also use firefox (though do they still do that thing where you can't browse "in private" and not in private in parallel?).
+
+```bash
+python manage.py runserver 0.0.0.0:8000
 ```
 
 Getting some stuff to work:

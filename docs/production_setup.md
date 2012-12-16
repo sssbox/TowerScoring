@@ -17,6 +17,16 @@ You will need a good computer that will plug into
 sudo apt-get install rabbitmq-server
 ```
 
+Add the following to `/etc/rabbitmq/rabbitmq-env.conf`:
+
+```bash
+export RABBITMQ_NODENAME=rabbit@localhost
+export RABBITMQ_NODE_IP_ADDRESS=127.0.0.1
+export ERL_EPMD_ADDRESS=127.0.0.1
+```
+
+Restart rabbitmq or maybe even the computer (rabbitmq is a pain to set up, I'm still not 100% sure how to do it)
+
 ```bash
 sudo rabbitmqctl add_user scoring ancoiaoncuhncaoe
 sudo rabbitmqctl add_vhost scoring
