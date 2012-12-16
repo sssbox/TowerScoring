@@ -36,7 +36,7 @@ sudo rabbitmqctl set_permissions -p scoring scoring ".*" ".*" ".*"
 ### Run celery (you should probably actually install it for real in daemon mode, though you could also just do this  in a few terminals... (min 2 workers, probably want 3))
 
 ```bash
-python manage.py celeryd worker --settings=settings
+python manage.py celery worker --loglevel=INFO
 ```
 
 (Daemon mode: http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html#daemonizing)
