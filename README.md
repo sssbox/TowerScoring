@@ -73,7 +73,7 @@ python manage.py collectstatic
 
 ## Start the server
 
-* Using 0.0.0.0 as the ip to bind to means it will be listening on all interfaces so you can use [http://127.0.0.1:8000](http://127.0.0.1:8000) or [http://localhost:8000](http://localhost:8000) from your local machine or http://<your_ip>:8000 from your machine or any other computer on your network (also useful for testing as even without going to incognito you can have 3 different sessions, one each for those 3 urls (and 6 if you use incognito, 12 if you use incognito on both Chrome and Chromium, and 18 if you also use firefox (though do they still do that thing where you can't browse "in private" and not in private in parallel?).
+* Using 0.0.0.0 as the ip to bind to means it will be listening on all interfaces so you can use [http://127.0.0.1:8000](http://127.0.0.1:8000) or [http://localhost:8000](http://localhost:8000) from your local machine or `http://<your_ip>:8000` from your machine or any other computer on your network (also useful for testing as even without going to incognito you can have 3 different sessions, one each for those 3 urls (and 6 if you use incognito, 12 if you use incognito on both Chrome and Chromium, and 18 if you also use firefox (though do they still do that thing where you can't browse "in private" and not in private in parallel?).
 
 ```bash
 python manage.py runserver 0.0.0.0:8000
