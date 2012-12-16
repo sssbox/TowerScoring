@@ -73,7 +73,7 @@ python manage.py collectstatic
 
 ## Start the server
 
-* Using 0.0.0.0 as the ip to bind to means it will be listening on all interfaces so you can use [http://127.0.0.1:8000](http://127.0.0.1:8000) or [http://localhost:8000](http://localhost:8000) from your local machine or http://<your_ip>:8000 from your machine or any other computer on your network (also useful for testing as even without going to incognito you can have 3 different sessions, one each for those 3 urls (and 6 if you use incognito, 12 if you use incognito on both Chrome and Chromium, and 18 if you also use firefox (though do they still do that thing where you can't browse "in private" and not in private in parallel?).
+* Using 0.0.0.0 as the ip to bind to means it will be listening on all interfaces so you can use [http://127.0.0.1:8000](http://127.0.0.1:8000) or [http://localhost:8000](http://localhost:8000) from your local machine or `http://<your_ip>:8000` from your machine or any other computer on your network (also useful for testing as even without going to incognito you can have 3 different sessions, one each for those 3 urls (and 6 if you use incognito, 12 if you use incognito on both Chrome and Chromium, and 18 if you also use firefox (though do they still do that thing where you can't browse "in private" and not in private in parallel?).
 
 ```bash
 python manage.py runserver 0.0.0.0:8000
@@ -81,26 +81,23 @@ python manage.py runserver 0.0.0.0:8000
 
 ## Getting some stuff to work:
 
-log into `http://<your ip>:8000/admin/`
-Open in a new tab http://<your ip>:8000/ you should see the scorekeeper display (the migrations add the first user that exists in the database (the superuser you created with syncdb) to the scorekeeper group which makes the awesome scorekeeper display the screen you see at the homepage)
+log into `http://localhost:8000/admin/`
 
-click 'Users'
+Open in a new tab `http://localhost:8000/` you should see the scorekeeper display (the migrations add the first user that exists in the database (the superuser you created with syncdb) to the scorekeeper group which makes the awesome scorekeeper display the screen you see at the homepage)
 
-Add user "sk1" (with a short password) click "Save and continue editing"
-Make that user "Staff status" and add them to the "Scorers" group then click "save"
-* If you want you can repeat three more times for extra scorers
+Back in the admin:
 
+Change all timer/display passwords (normally you can change them by clicking the following link, saving and then changing the 2 to 3-6 for the scorer users.)
+* [http://localhost:8000/admin/auth/user/2/password/](http://localhost:8000/admin/auth/user/2/password/)
 
-Add user "timer" (with a good password) click "Save and continue editing"
-Make user "Staff status" AND add them to the group "Displays" before saving
-
-Back at the scorekeeper homepage, refresh to get all your new scorers in the "Scorer" drop down menus, assign your scorers to the different goals.
+Back at the scorekeeper homepage, assing the scorers with the "Scorer" drop down menus.
 
 
-Open a different browser (Firefox vs Chrome (incognito doesn't work with django's dev server for some reason)) and go to http://<your ip>:8000/
+Open a different browser and go to http://localhost:8000/
+
 Log in as 'timer'
 
-Use your phone on your wifi to go to `http://<your ip>:8000/` and log in as a scorer.
+Use your phone on your wifi to go to `http://<your ip>:8000/` and log in as a scorer_1 (or _2, _3, or _4).
 
 From the original superuser account on the scorekeeper display start a match and play with other stuff like that.
 
