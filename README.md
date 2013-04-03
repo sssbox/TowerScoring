@@ -33,6 +33,7 @@ sudo apt-get install -y libmysqlclient-dev
 sudo pip install virtualenv
 sudo pip install virtualenvwrapper
 
+source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv scoring --no-site-packages
 deactivate
 workon scoring
