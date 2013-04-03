@@ -25,6 +25,7 @@ sudo apt-get install -y python-mysqldb
 sudo apt-get install -y python-profiler
 sudo apt-get install -y libtidy-dev
 sudo apt-get install -y libmysqlclient-dev
+sudo apt-get install -y python-dev
 ```
 
 ## install virtualenv(wrapper) and then create a virtualenv for scoring
